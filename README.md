@@ -1,0 +1,1 @@
+# salt-mk-verificator
