@@ -18,7 +18,7 @@ s_gauge = 5
 def count_avg_time(node_times_list):
     print "Counting AVG time..."
     global h, m, s
-    divisor = 0
+    divisor = -1
     for time_list in node_times_list:
         h += int(time_list[0])
         m += int(time_list[1])
@@ -40,8 +40,13 @@ def draw_results_table(data_to_draw):
     tab.set_cols_valign(["c", "c", "c", "c"])
     tab.add_row(["Node", "Time", "AVG time", "Result"])
 
+    fail_tab = tt.Texttable()
+    fail_tab.set_chars(['-', '|', '+', '-'])
+    fail_tab.set_cols_align(["c", "c", "c", "c"])
+    fail_tab.set_cols_valign(["c", "c", "c", "c"])
+    fail_tab.add_row(["Node", "Time", "AVG time", "Result"])
+
     for node in data_to_draw:
-        tab.add_row([node, "", "", ""])
         ntime = data_to_draw.get(node)
 
         n_time = "{}h {}m {}s".format(ntime[0],
@@ -50,25 +55,29 @@ def draw_results_table(data_to_draw):
         tgauge = "{}h {}m {}s".format(h, m, s)
 
         if (int(ntime[0]) - h) != h_gauge:
-            tab.add_row(["",n_time, tgauge, "FAILED"])
+            tab.add_row([node, n_time, tgauge, "FAILED"])
         elif (int(ntime[1]) - m) != m_gauge:
-            tab.add_row(["", n_time, tgauge, "FAILED"])
+            tab.add_row([node, n_time, tgauge, "FAILED"])
         elif (int(ntime[2]) - s) > s_gauge:
             # TODO: add correct verification for seconds difference
-            tab.add_row(["", n_time, tgauge, "FAILED"])
+            tab.add_row([node, n_time, tgauge, "FAILED"])
+            fail_tab.add_row([node, n_time, tgauge, "FAILED"])
         else:
-            tab.add_row(["", n_time, tgauge, "+"])
-    # TODO: draw only table with FAILED results
+            tab.add_row([node, n_time, tgauge, "+"])
+
+    print "Table with results:"
     print tab.draw()
+
+    print "\nTable with FAILED results:"
+    print fail_tab.draw()
 
 
 def main():
-    global nodes_info
     local = client.LocalClient()
 
     try:
         print "Trying to obtain nodes time..."
-        nodes_info = local.cmd('ctl*', 'cmd.run', ['sudo date +"%H %M %S"'])
+        nodes_info = local.cmd('*', 'cmd.run', ['date +"%H %M %S"'])
     except Exception as e:
         print e
 
