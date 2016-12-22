@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # RUN AS SUDO ON SALT MASTER
 # TODO: optionally use args to have a list of MTU for specific node set
-# TODO: print only FAILED MTU nodes
 
 import salt.client as client
 import texttable as tt
@@ -139,12 +138,19 @@ def get_node_ifaces(node_, node_ifaces_, local):
 
 
 def draw_results_table(total):
+    #TODO: add vidth for 1st column with node name
     print "Trying to draw a table with the results..."
     tab = tt.Texttable()
     tab.set_chars(['-', '|', '+', '-'])
     tab.set_cols_align(["c", "c", "c", "c", "c"])
     tab.set_cols_valign(["c", "c", "c", "c", "c"])
     tab.add_row(["Node", "Iface", "MTU set", "MTU expected", "Result"])
+
+    failed_tab = tt.Texttable()
+    failed_tab.set_chars(['-', '|', '+', '-'])
+    failed_tab.set_cols_align(["c", "c", "c", "c", "c"])
+    failed_tab.set_cols_valign(["c", "c", "c", "c", "c"])
+    failed_tab.add_row(["Node", "Iface", "MTU set", "MTU expected", "Result"])
 
     for node_ in total:
             ifaces = total.get(node_)
@@ -163,13 +169,11 @@ def draw_results_table(total):
                         tab.add_row(["", iface, mtu, gauge, "+"])
                     else:
                         tab.add_row(["", iface, mtu, gauge, "FAILED"])
-
-    table = tab.draw()
-
-    with open("table", "w") as file_:
-        file_.write(table)
-    print "----------Results gathered!----------"
+                        failed_tab.add_row([node_, iface, mtu, gauge, "FAILED"])
     print tab.draw()
+    print "Failed MTU interfaces:"
+    #TODO: save failed nodes table to a file
+    print failed_tab.draw()
 
 
 def main():
@@ -195,6 +199,7 @@ def main():
                     print e
         except Exception as e:
             print e
+
 
     draw_results_table(TOTAL)
     print "\nDONE"
