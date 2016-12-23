@@ -9,14 +9,16 @@ import texttable as tt
 expectations = {
     "ceph": {
         "bond0": "9100",
-        "bond0.1201": "9100",
         "bond0.1204": "9100",
         "bond0.1208": "9100",
         "cp": "9100",
-        "eno1": "9000",
-        "eno2": "9000",
-        "eno3": "9000",
-        "eno4": "9000",
+        "eno1": "1500",
+        "eno2": "1500",
+        "eno3": "9100",
+        "eno4": "9100",
+        "eno3d1": "9100",
+        "ens2f0": "9100",
+        "ens2f1": "9100",
         "storage":"9100"
     },
     "kvm": {
@@ -28,7 +30,7 @@ expectations = {
         "bond0.1208": "9100",
         "br-cp": "9000",
         "br-private": "9000",
-        "br-public": "9100",
+        "br-public": "9000",
         "br-pxe": "9000",
         "br-storage": "9100",
         "eno1": "9000",
@@ -38,7 +40,21 @@ expectations = {
         "vnet0": "9000",
         "vnet1": "9000",
         "vnet2": "9000",
-        "vnet3": "9000"
+        "vnet3": "9000",
+        "vnet4": "9000",
+        "vnet5": "9000",
+        "vnet6": "9000",
+        "vnet7": "9000",
+        "vnet8": "9000",
+        "vnet9": "9000",
+        "vnet10": "9000",
+        "vnet11": "9000",
+        "vnet12": "9000",
+        "vnet13": "9000",
+        "vnet14": "9000",
+        "em1": "9100",
+        "em3": "9100",
+        "em4": "9100"
     },
     "prx":{
         "eth0": "1500",
@@ -144,18 +160,21 @@ def draw_results_table(total):
     tab.set_chars(['-', '|', '+', '-'])
     tab.set_cols_align(["c", "c", "c", "c", "c"])
     tab.set_cols_valign(["c", "c", "c", "c", "c"])
+    tab.set_cols_width([26, 7, 10, 10, 10])
     tab.add_row(["Node", "Iface", "MTU set", "MTU expected", "Result"])
 
     failed_tab = tt.Texttable()
     failed_tab.set_chars(['-', '|', '+', '-'])
     failed_tab.set_cols_align(["c", "c", "c", "c", "c"])
     failed_tab.set_cols_valign(["c", "c", "c", "c", "c"])
+    failed_tab.set_cols_width([26, 7, 10, 10, 10])
     failed_tab.add_row(["Node", "Iface", "MTU set", "MTU expected", "Result"])
 
     for node_ in total:
             ifaces = total.get(node_)
             node_name_ = node_.split('-')[0]
             tab.add_row([node_, "", "", "", ""])
+            failed_tab.add_row([node_, "", "", "", ""])
             for iface in ifaces:
                 if node_name_ not in expectations:
                     continue
@@ -169,7 +188,7 @@ def draw_results_table(total):
                         tab.add_row(["", iface, mtu, gauge, "+"])
                     else:
                         tab.add_row(["", iface, mtu, gauge, "FAILED"])
-                        failed_tab.add_row([node_, iface, mtu, gauge, "FAILED"])
+                        failed_tab.add_row(["", iface, mtu, gauge, "FAILED"])
     print tab.draw()
     print "Failed MTU interfaces:"
     #TODO: save failed nodes table to a file
