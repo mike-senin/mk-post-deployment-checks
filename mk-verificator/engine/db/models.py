@@ -9,7 +9,9 @@ class Task(Base):
     __tablename__ = 'tasks'
 
     id = Column(Integer, primary_key=True, unique=True)
-    results = Column(JSON)
+    # JSON is available only for postgresql
+    #results = Column(JSON)
+    results = Column(String)
     uuid = Column(String)
     name = Column(String)
     state = Column(String)
