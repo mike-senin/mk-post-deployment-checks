@@ -12,121 +12,114 @@ expectations = {
         "bond0.1204": "9100",
         "bond0.1208": "9100",
         "cp": "9100",
-        "eno1": "1500",
-        "eno2": "1500",
-        "eno3": "9100",
         "eno4": "9100",
-        "eno3d1": "9100",
         "ens2f0": "9100",
         "ens2f1": "9100",
-        "storage":"9100"
+        "storage": "9100"
     },
     "kvm": {
         "bond0": "9100",
         "bond0.1201": "9100",
         "bond0.1202": "9100",
-        "bond0.1203": "9100",
         "bond0.1204": "9100",
         "bond0.1208": "9100",
-        "br-cp": "9000",
-        "br-private": "9000",
-        "br-public": "9000",
-        "br-pxe": "9000",
+        "br-cp": "9100",
+        "br-private": "9100",
+        "br-public": "9100",
+        "br-pxe": "1500",
         "br-storage": "9100",
-        "eno1": "9000",
-        "eno2": "9000",
         "eno3": "9100",
         "eno4": "9100",
-        "vnet0": "9000",
-        "vnet1": "9000",
-        "vnet2": "9000",
-        "vnet3": "9000",
-        "vnet4": "9000",
-        "vnet5": "9000",
-        "vnet6": "9000",
-        "vnet7": "9000",
-        "vnet8": "9000",
-        "vnet9": "9000",
-        "vnet10": "9000",
-        "vnet11": "9000",
-        "vnet12": "9000",
-        "vnet13": "9000",
-        "vnet14": "9000",
-        "em1": "9100",
+        "vnet0": "9100",
+        "vnet1": "9100",
+        "vnet2": "9100",
+        "vnet3": "9100",
+        "vnet4": "9100",
+        "vnet5": "9100",
+        "vnet6": "9100",
+        "vnet7": "9100",
+        "vnet8": "9100",
+        "vnet9": "9100",
+        "vnet10": "9100",
+        "vnet11": "9100",
+        "vnet12": "9100",
+        "vnet13": "9100",
+        "vnet14": "9100",
+        "vnet15": "9100",
+        "vnet16": "9100",
+        "vnet17": "9100",
+        "vnet18": "9100",
+        "vnet19": "9100",
+        "vnet20": "9100",
+        "vnet21": "9100",
         "em3": "9100",
         "em4": "9100"
     },
-    "prx":{
+    "prx": {
         "eth0": "1500",
         "eth1": "9000",
         "eth2": "9000"
     },
-    "cpu":{
+    "cpu": {
         "bond0": "9100",
         "bond0.1202": "9100",
         "bond0.1204": "9100",
         "bond0.1208": "9100",
         "bonding_masters": "9000",
-        "eno1": "1500",
-        "eno2": "1500",
         "eno3": "9100",
         "eno4": "9100",
-        "pkt0": "1500",
-        "pkt1": "65535",
-        "pkt2": "65535",
-        "pkt3": "65535",
         "tap09bdf181-45": "9000",
         "tap8a299d2d-5d": "9000",
-        "vhost0": "9000"
+        "vhost0": "9100"
     },
-    "rmq":{
+    "rmq": {
         "eth0": "1500",
         "eth1": "9000"
     },
-    "sql":{
+    "sql": {
         "eth0": "1500",
         "eth1": "9000"
     },
-    "ctl":{
+    "ctl": {
         "eth0": "1500",
         "eth1": "9000",
         "eth2": "9000",
         "eth3": "9000"
     },
-    "des":{
+    "des": {
         "eth0": "1500",
         "eth1": "9000"
     },
-    "nal":{
+    "nal": {
         "eth0": "1500",
         "eth1": "9000"
     },
-    "saml":{
+    "saml": {
         "eth0": "1500",
         "eth1": "9000",
         "eth2": "9000"
     },
-    "asc":{
+    "asc": {
         "eth0": "1500",
         "eth1": "9000"
     },
-    "ntw":{
+    "ntw": {
         "eth0": "1500",
         "eth1": "9000",
         "eth2": "9000"
     },
-    "apt":{
+    "apt": {
         "eth0": "1500"
     },
-    "log":{
+    "log": {
         "eth0": "1500",
         "eth1": "9000"
     },
-    "mtr":{
+    "mtr": {
         "eth0": "1500",
         "eth1": "9000"
     },
-    "mon":{
+    "mon": {
         "eth0": "1500",
         "eth1": "9000"
     }
@@ -135,9 +128,17 @@ expectations = {
 TOTAL = {}
 network_info = {}
 node_ifaces = {}
+# TODO add func that works with iface_names
+# and collects info from them but not from all nodes
+iface_names = ("ceph", "kvm", "prx",
+               "cpu", "rmq", "sql",
+               "ctl", "des", "nal",
+               "saml", "asc", "ntw",
+               "apt", "log", "mtr",
+               "mon")
 
 
-def get_node_ifaces(node_, node_ifaces_, local):
+def get_node_ifaces_info(node_, node_ifaces_, local):
     skipped_ifaces = ["bonding_masters", "lo"]
     print "Trying to gather ifaces info for {}...".format(node_)
     ifaces = {}
@@ -154,14 +155,8 @@ def get_node_ifaces(node_, node_ifaces_, local):
 
 
 def draw_results_table(total):
-    #TODO: add vidth for 1st column with node name
+    # TODO: add vidth for 1st column with node name
     print "Trying to draw a table with the results..."
-    tab = tt.Texttable()
-    tab.set_chars(['-', '|', '+', '-'])
-    tab.set_cols_align(["c", "c", "c", "c", "c"])
-    tab.set_cols_valign(["c", "c", "c", "c", "c"])
-    tab.set_cols_width([26, 7, 10, 10, 10])
-    tab.add_row(["Node", "Iface", "MTU set", "MTU expected", "Result"])
 
     failed_tab = tt.Texttable()
     failed_tab.set_chars(['-', '|', '+', '-'])
@@ -173,7 +168,6 @@ def draw_results_table(total):
     for node_ in total:
             ifaces = total.get(node_)
             node_name_ = node_.split('-')[0]
-            tab.add_row([node_, "", "", "", ""])
             failed_tab.add_row([node_, "", "", "", ""])
             for iface in ifaces:
                 if node_name_ not in expectations:
@@ -182,16 +176,11 @@ def draw_results_table(total):
                     group = expectations.get(node_name_)
                     gauge = group.get(iface)
                     mtu = ifaces.get(iface)
-                    if iface not in group:
-                        tab.add_row(["", iface, mtu, "", ""])
-                    elif int(mtu) == int(gauge):
-                        tab.add_row(["", iface, mtu, gauge, "+"])
-                    else:
-                        tab.add_row(["", iface, mtu, gauge, "FAILED"])
+                    if iface not in expectations:
+                        continue
+                    elif int(mtu) != int(gauge):
                         failed_tab.add_row(["", iface, mtu, gauge, "FAILED"])
-    print tab.draw()
     print "Failed MTU interfaces:"
-    #TODO: save failed nodes table to a file
     print failed_tab.draw()
 
 
@@ -207,22 +196,25 @@ def main():
 
     for node, ifaces_info in network_info.iteritems():
         try:
+            if 'kvm' in node:
+                kvm_info = local.cmd(node, 'cmd.run',
+                                        ["virsh list | grep jse2 | awk '{print $2}' | xargs -n1 virsh domiflist | "
+                                         "grep -v br-pxe | grep br- | awk '{print $1}'"])
+                ifaces_info = kvm_info.get(node)
             node_name = node.split('-')[0]
             node_ifaces = ifaces_info.split('\n')
-            if not expectations.has_key(node_name):
+            if node_name not in expectations:
                 print "Node {} is not matching expected groups!".format(node)
             else:
                 try:
-                    get_node_ifaces(node, node_ifaces, local)
+                    get_node_ifaces_info(node, node_ifaces, local)
                 except Exception as e:
                     print e
         except Exception as e:
             print e
-
 
     draw_results_table(TOTAL)
     print "\nDONE"
 
 if __name__ == "__main__":
     main()
-

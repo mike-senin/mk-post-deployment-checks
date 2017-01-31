@@ -55,12 +55,11 @@ def draw_results_table(data_to_draw):
         tgauge = "{}h {}m {}s".format(h, m, s)
 
         if (int(ntime[0]) - h) != h_gauge:
-            tab.add_row([node, n_time, tgauge, "FAILED"])
+            fail_tab.add_row([node, n_time, tgauge, "FAILED"])
         elif (int(ntime[1]) - m) != m_gauge:
-            tab.add_row([node, n_time, tgauge, "FAILED"])
+            fail_tab.add_row([node, n_time, tgauge, "FAILED"])
         elif (int(ntime[2]) - s) > s_gauge:
             # TODO: add correct verification for seconds difference
-            tab.add_row([node, n_time, tgauge, "FAILED"])
             fail_tab.add_row([node, n_time, tgauge, "FAILED"])
         else:
             tab.add_row([node, n_time, tgauge, "+"])
