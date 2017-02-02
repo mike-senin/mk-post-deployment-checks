@@ -1,9 +1,5 @@
-#!/usr/bin/env python
-# RUN AS SUDO ON SALT MASTER
-
 import salt.client as client
 import texttable as tt
-import pdb
 
 data_to_draw = {}
 node_times_list = []
@@ -16,7 +12,6 @@ s_gauge = 5
 
 
 def count_avg_time(node_times_list):
-    print "Counting AVG time..."
     global h, m, s
     divisor = -1
     for time_list in node_times_list:
@@ -27,7 +22,6 @@ def count_avg_time(node_times_list):
     h = h/divisor
     m = m/divisor
     s = s/divisor
-    print "Counted..."
 
 
 def draw_results_table(data_to_draw):
