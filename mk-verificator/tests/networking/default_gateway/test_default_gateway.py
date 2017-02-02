@@ -8,17 +8,19 @@ import pytest
         'cmp*',
         'ctl*'
         'saml*'
+        # TODO
     ])
 def test_check_default_gateways(local_salt_client, group):
-    skipped_nodes = ['saml-global-01.mosci.jiocloud.com']
 
     netstat_info = \
         local_salt_client.cmd(group, 'cmd.run', ['ip r | sed -n 1p'])
-    import pdb; pdb.set_trace()
 
-    # TODO
-    gw = {}
-    for node in netstat_info.items():
-        pass
+    gateways =  {} # set(netstat_info.values())
+    nodes = netstat_info.keys()
+    for node in nodes:
+        if not gateways.has_key(netstat_info[node]):
+            gateways[netstat_info[node]] = [node]
+        else:
+            gateways[netstat_info[node]].append(node)
 
-    assert len(gw) != 1, json.dumps(gw, indent=4)
+    assert len(gateways) != 1, json.dumps(gateways, indent=4)
