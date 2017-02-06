@@ -32,11 +32,11 @@ def test_ntp_sync(local_salt_client):
         ntime = data.get(node)
 
         if (int(ntime[0]) - h) != h_gauge:
-            fail[node] = ntime
+            fail[node] = "{}h {}m {}s".format(ntime[0], ntime[1], ntime[2])
         elif (int(ntime[1]) - m) != m_gauge:
-            fail[node] = ntime
+            fail[node] = "{}h {}m {}s".format(ntime[0], ntime[1], ntime[2])
         elif (int(ntime[2]) - s) > s_gauge:
             # TODO: add correct verification for seconds difference
-            fail[node] = ntime
+            fail[node] = "{}h {}m {}s".format(ntime[0], ntime[1], ntime[2])
 
-    assert not fail, 'Nodes with time mismatch: {}'.format(fail)
+    assert not fail, 'AVG time: {}h {}m {}s\nNodes with time mismatch: {}'.format(h, m, s, fail)
