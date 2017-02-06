@@ -22,8 +22,7 @@ def test_check_default_gateways(local_salt_client, group):
         else:
             gateways[netstat_info[node]].append(node)
 
-    # TODO
-    assert len(gateways) != 1, \
+    assert len(gateways.keys()) == 1, \
         "There were found few gateways within group {group}: {gw}".format(
         group=group,
         gw=json.dumps(gateways, indent=4)
