@@ -8,7 +8,7 @@ def local_salt_client():
     return local
 
 
-@pytest.fixture()
+@pytest.fixture
 def active_nodes(local_salt_client, skipped_nodes=None):
     skipped_nodes = skipped_nodes or []
     nodes = local_salt_client.cmd('*', 'test.ping')
@@ -19,7 +19,7 @@ def active_nodes(local_salt_client, skipped_nodes=None):
     return active_nodes
 
 
-@pytest.fixture()
+@pytest.fixture
 def groups(active_nodes, skipped_group=None):
     skipped_group = skipped_group or []
     import pdb; pdb.set_trace()
