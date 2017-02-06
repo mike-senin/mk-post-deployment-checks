@@ -25,10 +25,15 @@ def get_active_nodes(config):
 def get_groups(config):
     active_nodes = get_active_nodes(config)
     skipped_group = config.get('skipped_group') or []
-    groups = [
-        node.split('-')[0] + '*' for node in active_nodes
-        if node not in skipped_group
-    ]
+    groups = []
+
+    for node in active_nodes:
+        group_name = "{group_name}*".format(
+            group_name=node.split('-')[0]
+        )
+        if group_name not in skipped_group and group_name not in groups:
+            groups.append(group_name)
+
     return groups
 
 

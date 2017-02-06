@@ -10,7 +10,7 @@ with open('LICENSE') as f:
     license = f.read()
 
 setup(
-    name='mk-verificator',
+    name='mk_verificator',
     version='0.0.1',
     description='set of tools for MK deployments verification',
     long_description=readme,
