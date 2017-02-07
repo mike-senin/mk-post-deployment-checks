@@ -92,7 +92,3 @@ for group_name, nodes in groups.items():
     else:
        print "Verification for group %s was skipped due to count of nodes less than 2" % group_name
     print "-" * 140
-
-
-def test_packet_version_mismatch(local_salt_client):
-    pass
