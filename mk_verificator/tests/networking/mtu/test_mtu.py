@@ -1,142 +1,19 @@
-#!/usr/bin/env python
-
-import salt.client as client
-import texttable as tt
-
-expectations = {
-    "ceph": {
-        "bond0": "9100",
-        "bond0.1204": "9100",
-        "bond0.1208": "9100",
-        "cp": "9100",
-        "eno4": "9100",
-        "ens2f0": "9100",
-        "ens2f1": "9100",
-        "storage": "9100"
-    },
-    "kvm": {
-        "bond0": "9100",
-        "bond0.1201": "9100",
-        "bond0.1202": "9100",
-        "bond0.1204": "9100",
-        "bond0.1208": "9100",
-        "br-cp": "9100",
-        "br-private": "9100",
-        "br-public": "9100",
-        "br-pxe": "1500",
-        "br-storage": "9100",
-        "eno3": "9100",
-        "eno4": "9100",
-        "vnet0": "9100",
-        "vnet1": "9100",
-        "vnet2": "9100",
-        "vnet3": "9100",
-        "vnet4": "9100",
-        "vnet5": "9100",
-        "vnet6": "9100",
-        "vnet7": "9100",
-        "vnet8": "9100",
-        "vnet9": "9100",
-        "vnet10": "9100",
-        "vnet11": "9100",
-        "vnet12": "9100",
-        "vnet13": "9100",
-        "vnet14": "9100",
-        "vnet15": "9100",
-        "vnet16": "9100",
-        "vnet17": "9100",
-        "vnet18": "9100",
-        "vnet19": "9100",
-        "vnet20": "9100",
-        "vnet21": "9100",
-        "em3": "9100",
-        "em4": "9100"
-    },
-    "prx": {
-        "eth0": "1500",
-        "eth1": "9000",
-        "eth2": "9000"
-    },
-    "cpu": {
-        "bond0": "9100",
-        "bond0.1202": "9100",
-        "bond0.1204": "9100",
-        "bond0.1208": "9100",
-        "bonding_masters": "9000",
-        "eno3": "9100",
-        "eno4": "9100",
-        "tap09bdf181-45": "9000",
-        "tap8a299d2d-5d": "9000",
-        "vhost0": "9100"
-    },
-    "rmq": {
-        "eth0": "1500",
-        "eth1": "9000"
-    },
-    "sql": {
-        "eth0": "1500",
-        "eth1": "9000"
-    },
-    "ctl": {
-        "eth0": "1500",
-        "eth1": "9000",
-        "eth2": "9000",
-        "eth3": "9000"
-    },
-    "des": {
-        "eth0": "1500",
-        "eth1": "9000"
-    },
-    "nal": {
-        "eth0": "1500",
-        "eth1": "9000"
-    },
-    "saml": {
-        "eth0": "1500",
-        "eth1": "9000",
-        "eth2": "9000"
-    },
-    "asc": {
-        "eth0": "1500",
-        "eth1": "9000"
-    },
-    "ntw": {
-        "eth0": "1500",
-        "eth1": "9000",
-        "eth2": "9000"
-    },
-    "apt": {
-        "eth0": "1500"
-    },
-    "log": {
-        "eth0": "1500",
-        "eth1": "9000"
-    },
-    "mtr": {
-        "eth0": "1500",
-        "eth1": "9000"
-    },
-    "mon": {
-        "eth0": "1500",
-        "eth1": "9000"
-    }
-}
+import pytest
+from mk_verificator import utils
 
 
-def test_mtu(local_salt_client):
+@pytest.mark.parametrize(
+    "groups",
+    utils.get_groups(utils.get_configuration(__file__))
+)
+def test_mtu(local_salt_client, groups):
     skipped_ifaces = ["bonding_masters", "lo"]
     TOTAL = {}
     failed_ifaces = {}
-    # TODO add func that works with iface_names
-    # and collects info from them but not from all nodes
-    iface_names = ("ceph", "kvm", "prx",
-                   "cpu", "rmq", "sql",
-                   "ctl", "des", "nal",
-                   "saml", "asc", "ntw",
-                   "apt", "log", "mtr",
-                   "mon")
 
-    network_info = local_salt_client.cmd('*', 'cmd.run', ['sudo ls /sys/class/net/'])
+    gauges = utils.get_expected_mtu(__file__)
+
+    network_info = local_salt_client.cmd(groups, 'cmd.run', ['sudo ls /sys/class/net/'])
 
     for node, ifaces_info in network_info.iteritems():
         if 'kvm' in node:
@@ -146,7 +23,7 @@ def test_mtu(local_salt_client):
             ifaces_info = kvm_info.get(node)
         node_name = node.split('-')[0]
         node_ifaces = ifaces_info.split('\n')
-        if node_name not in expectations:
+        if node_name not in gauges:
             print "Node {} is not matching expected groups!".format(node)
         else:
             ifaces = {}
@@ -163,13 +40,13 @@ def test_mtu(local_salt_client):
         node_name_ = node_.split('-')[0]
 
         for iface in ifaces:
-            if node_name_ not in expectations:
+            if node_name_ not in gauges:
                 continue
             else:
-                group = expectations.get(node_name_)
+                group = gauges.get(node_name_)
                 gauge = group.get(iface)
                 mtu = ifaces.get(iface)
-                if iface not in expectations:
+                if iface not in gauges:
                     continue
                 elif int(mtu) != int(gauge):
                     failed_ifaces[node_].append(iface)

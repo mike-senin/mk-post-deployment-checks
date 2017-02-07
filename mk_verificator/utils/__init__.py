@@ -42,3 +42,10 @@ def get_configuration(path_to_test):
     config_file = '/'.join([test_folder, "config.yaml"])
     config = yaml.load(open(config_file, 'r'))
     return config
+
+
+def get_expected_mtu(path_to_file):
+    test_folder = os.path.dirname(os.path.abspath(path_to_file))
+    config_file = '/'.join([test_folder, "expected.yaml"])
+    expected = yaml.load(open(config_file, 'r'))
+    return expected
