@@ -32,7 +32,7 @@ def test_pkg_version(local_salt_client, group):
 
                     for pkg_name in node_i_pkgs:
 
-                        if node_j_pkgs in pkg_name:
+                        if node_j_pkgs.has_key(pkg_name):
                             i_packet_version = node_i_pkgs[pkg_name]
                             j_packet_version = node_j_pkgs[pkg_name]
                             if i_packet_version != j_packet_version:
