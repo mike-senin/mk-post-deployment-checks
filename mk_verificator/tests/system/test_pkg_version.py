@@ -4,7 +4,7 @@ from mk_verificator import utils
 
 @pytest.mark.parametrize(
     "group",
-    utils.get_groups(utils.get_configuration(__file__))
+    utils.get_groups(utils.get_configuration(__file__)))
 def test_pkg_version(local_salt_client, group):
 
     pkgs_info = local_salt_client.cmd(group, 'lowpkg.list_pkgs')
