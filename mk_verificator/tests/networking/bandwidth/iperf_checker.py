@@ -84,7 +84,7 @@ measurement_results = []
 nodes = master_client.cmd('*', 'test.ping')
 skipped_nodes = ['saml-global-01.mosci.jiocloud.com']
 active_nodes = [
-    node_name for node_name in nodes 
+    node_name for node_name in nodes
     if nodes[node_name] and not node_name in skipped_nodes
 ]
 
@@ -94,7 +94,12 @@ global_results = []
 
 def draw_table_with_results():
     tab = tt.Texttable()
-    header = ['nodes group', 'sender node name', 'reciever node name', 'network', 'bandwidth']
+    header = [
+        'nodes group',
+        'sender node name',
+        'reciever node name',
+        'network',
+        'bandwidth']
     tab.set_cols_align(['l', 'l', 'l', 'l', 'l'])
     tab.set_cols_width([5, 30, 30, 15, 30])
     tab.header(header)
@@ -105,7 +110,7 @@ def draw_table_with_results():
 
 
 def init_iperf_servers():
-    master_client.run_job('*', 'cmd.run', ['iperf -s'])    
+    master_client.run_job('*', 'cmd.run', ['iperf -s'])
 
 
 def drop_iperf_servers():
@@ -136,12 +141,18 @@ def _parse_iperf_results(minion_raw_output):
     return results
 
 
-def _add_to_global_table(nodes_group, sender_node_name, reciever_node_name, network, bandwidth):
-    global_results.append([nodes_group, sender_node_name, reciever_node_name, network, bandwidth])
+def _add_to_global_table(
+        nodes_group,
+        sender_node_name,
+        reciever_node_name,
+        network,
+        bandwidth):
+    global_results.append([nodes_group, sender_node_name,
+                           reciever_node_name, network, bandwidth])
 
 
 def _prepare_network_info(group_name_i, group_name_j):
-    if not (groups.has_key(group_name_i) and groups.has_key(group_name_j)):
+    if not (group_name_i in groups and group_name_j in groups):
         print "Test skipped for groups: {0} and {1}".format(group_name_i, group_name_j)
         return
 

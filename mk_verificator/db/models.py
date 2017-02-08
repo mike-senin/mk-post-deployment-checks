@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, JSON, create_engine
+from sqlalchemy import Column, Integer, String
 
 Base = declarative_base()
 
@@ -10,7 +10,7 @@ class Task(Base):
 
     id = Column(Integer, primary_key=True, unique=True)
     # JSON is available only for postgresql
-    #results = Column(JSON)
+    # results = Column(JSON)
     results = Column(String)
     uuid = Column(String)
     name = Column(String)
@@ -21,7 +21,6 @@ class Task(Base):
         self.uuid = uuid
         self.name = name
         self.state = state
-
 
     # TODO
     # def __repr__(self):
@@ -34,6 +33,3 @@ class Scenario():
 
 def init_base():
     pass
-
-
-

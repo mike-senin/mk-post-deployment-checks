@@ -14,4 +14,3 @@ def test_contrail_status(local_salt_client):
                 broken_services.append(err_msg)
 
     assert not broken_services, 'Broken services: {}'.format(broken_services)
-
