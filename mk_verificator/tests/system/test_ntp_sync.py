@@ -19,9 +19,9 @@ def count_avg_time(node_times_list):
         m += int(time_list[1])
         s += int(time_list[2])
         divisor += 1
-    h = h/divisor
-    m = m/divisor
-    s = s/divisor
+    h = h / divisor
+    m = m / divisor
+    s = s / divisor
 
 
 def draw_results_table(data_to_draw):

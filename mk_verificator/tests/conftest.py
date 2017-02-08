@@ -20,4 +20,3 @@ def pytest_report_teststatus(report):
         return
 
     # TODO get results from test and add it as attachment
-

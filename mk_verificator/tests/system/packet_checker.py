@@ -13,7 +13,7 @@ groups = {}
 
 for node_name, node_pkgs in pkgs_info.items():
     group_name = node_name.split('-')[0]
-    if not groups.has_key(group_name):
+    if group_name not in groups:
         groups[group_name] = [(node_name, node_pkgs)]
     else:
         groups[group_name].append((node_name, node_pkgs))
@@ -32,7 +32,7 @@ def draw_table_missed_packets(node_1_name, node_2_name, pkts_data):
     s = tab.draw()
     print "Packets installed on %s, but not installed on %s" % (node_1_name, node_2_name)
     print s
-    print 
+    print
 
 
 def draw_table_version_conflicts(node_1_name, node_2_name, pkts_data):
@@ -48,7 +48,7 @@ def draw_table_version_conflicts(node_1_name, node_2_name, pkts_data):
     s = tab.draw()
     print "Packets with different versions:"
     print s
-    print 
+    print
 
 
 for group_name, nodes in groups.items():
@@ -71,24 +71,27 @@ for group_name, nodes in groups.items():
                     if pkg_name in packets_to_skip:
                         continue
 
-                    if node_j_pkgs.has_key(pkg_name):
+                    if pkg_name in node_j_pkgs:
                         i_packet_version = node_i_pkgs[pkg_name]
                         j_packet_version = node_j_pkgs[pkg_name]
                         if i_packet_version != j_packet_version:
-                            version_conflicts.append((pkg_name, i_packet_version, j_packet_version))
+                            version_conflicts.append(
+                                (pkg_name, i_packet_version, j_packet_version))
                     else:
-                        i_packet_version =  node_i_pkgs[pkg_name]
+                        i_packet_version = node_i_pkgs[pkg_name]
                         missed_packets.append((pkg_name, i_packet_version))
 
                 if missed_packets:
-                    draw_table_missed_packets(node_i_name, node_j_name, missed_packets)
+                    draw_table_missed_packets(
+                        node_i_name, node_j_name, missed_packets)
 
                 if version_conflicts:
-                    draw_table_version_conflicts(node_i_name, node_j_name, version_conflicts)
-    
+                    draw_table_version_conflicts(
+                        node_i_name, node_j_name, version_conflicts)
+
                 if missed_packets or version_conflicts:
                     print "-" * 140
 
     else:
-       print "Verification for group %s was skipped due to count of nodes less than 2" % group_name
+        print "Verification for group %s was skipped due to count of nodes less than 2" % group_name
     print "-" * 140

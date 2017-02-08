@@ -10,39 +10,40 @@ nodes = services_info.keys()
 groups = {}
 
 system_services = [
-"acpid",
-"apparmor",
-"apport",
-"atd",
-"console-setup",
-"cron",
-"dbus",
-"dns-clean",
-"friendly-recovery",
-"grub-common",
-"irqbalance",
-"killprocs",
-"kmod",
-"networking",
-"ntp",
-"ondemand",
-"pppd-dns",
-"procps",
-"rc.local",
-"resolvconf",
-"rsync",
-"rsyslog",
-"screen-cleanup",
-"sendsigs",
-"ssh",
-"sudo",
-"udev",
-"umountfs",
-"umountnfs.sh",
-"umountroot",
-"unattended-upgrades",
-"urandom",
+    "acpid",
+    "apparmor",
+    "apport",
+    "atd",
+    "console-setup",
+    "cron",
+    "dbus",
+    "dns-clean",
+    "friendly-recovery",
+    "grub-common",
+    "irqbalance",
+    "killprocs",
+    "kmod",
+    "networking",
+    "ntp",
+    "ondemand",
+    "pppd-dns",
+    "procps",
+    "rc.local",
+    "resolvconf",
+    "rsync",
+    "rsyslog",
+    "screen-cleanup",
+    "sendsigs",
+    "ssh",
+    "sudo",
+    "udev",
+    "umountfs",
+    "umountnfs.sh",
+    "umountroot",
+    "unattended-upgrades",
+    "urandom",
 ]
+
 
 def draw_services_table(services_data):
     tab = tt.Texttable()
@@ -60,7 +61,7 @@ def draw_services_table(services_data):
 
 for node_name, node_services in services_info.items():
     group_name = node_name.split('-')[0]
-    if not groups.has_key(group_name):
+    if group_name not in groups:
         groups[group_name] = set()
     else:
         for node_service in node_services:
