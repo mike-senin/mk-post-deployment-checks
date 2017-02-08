@@ -1,5 +1,3 @@
-import pytest
-
 def test_checking_nova_compute(local_salt_client):
     service_info = local_salt_client.cmd(
         'cpu*', 
