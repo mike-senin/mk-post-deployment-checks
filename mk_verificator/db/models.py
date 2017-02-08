@@ -22,7 +22,6 @@ class Task(Base):
         self.name = name
         self.state = state
 
-
     # TODO
     # def __repr__(self):
     #     pass
@@ -34,6 +33,3 @@ class Scenario():
 
 def init_base():
     pass
-
-
-

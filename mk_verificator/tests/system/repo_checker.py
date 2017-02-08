@@ -8,11 +8,14 @@ name_node = '*'
 
 print "Script checks difference between 'salt pillar.data linux:system:repo' and 'cat /etc/apt/sources.list.d/*; cat /etc/apt/sources.list'"
 info = local.cmd(name_node, 'pillar.data', ['linux:system:repo'])
-info_cat = local.cmd(name_node, 'cmd.run', ['cat /etc/apt/sources.list.d/*;cat /etc/apt/sources.list|grep deb'])
+info_cat = local.cmd(
+    name_node,
+    'cmd.run',
+    ['cat /etc/apt/sources.list.d/*;cat /etc/apt/sources.list|grep deb'])
 
 temp = {}
 for node in info_cat:
-    if not temp.has_key(node):
+    if node not in temp:
         l = []
         l.extend(info_cat[node].split('\n'))
         temp[node] = l
@@ -20,22 +23,24 @@ for node in info_cat:
         temp[node].extend(info_cat[node].split('\n'))
 
     for index in range(len(temp[node])):
-        temp[node][index] = temp[node][index].replace('/ ',' ')
+        temp[node][index] = temp[node][index].replace('/ ', ' ')
 info_cat = temp
 
 temp = {}
 for node in info:
     for repo in info[node]['linux:system:repo']:
-        if not temp.has_key(node):
-            temp[node] = [info[node]['linux:system:repo'][repo]['source'].replace('/ ', ' ')]
+        if node not in temp:
+            temp[node] = [info[node]['linux:system:repo']
+                          [repo]['source'].replace('/ ', ' ')]
         else:
-            temp[node].append(info[node]['linux:system:repo'][repo]['source'].replace('/ ', ' '))
+            temp[node].append(info[node]['linux:system:repo'][
+                              repo]['source'].replace('/ ', ' '))
 info = temp
 
 groups = {}
 for node_name, node_gw in info.items():
     group_name = node_name.split('-')[0]
-    if not groups.has_key(group_name):
+    if group_name not in groups:
         groups[group_name] = [node_name]
     else:
         groups[group_name].append(node_name)

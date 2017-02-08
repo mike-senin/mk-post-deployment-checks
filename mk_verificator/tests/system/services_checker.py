@@ -11,7 +11,7 @@ groups = {}
 
 for node_name, node_services in pkgs_info.items():
     group_name = node_name.split('-')[0]
-    if not groups.has_key(group_name):
+    if group_name not in groups:
         groups[group_name] = []
     else:
         groups[group_name].append((node_name, node_services))
@@ -30,7 +30,7 @@ def draw_table_missed_services(node_1_name, node_2_name, services_data):
     s = tab.draw()
     print "Service installed on %s, but not installed on %s" % (node_1_name, node_2_name)
     print s
-    print 
+    print
 
 
 for group_name, nodes in groups.items():
@@ -57,7 +57,8 @@ for group_name, nodes in groups.items():
                         missed_services.append((service_name))
 
                 if missed_services:
-                    draw_table_missed_services(node_i_name, node_j_name, missed_services)
+                    draw_table_missed_services(
+                        node_i_name, node_j_name, missed_services)
                     print "-" * 140
 
     else:

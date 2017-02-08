@@ -24,11 +24,11 @@ class TasksRepository(object):
         task = models.Task(**values)
         session.add(task)
         session.commit()
-    
+
     @staticmethod
     def get(uuid):
         return session.query(models.Task).\
-                   filter(models.Task.uuid == uuid)
+            filter(models.Task.uuid == uuid)
 
     @staticmethod
     def update(uuid, task_obj):

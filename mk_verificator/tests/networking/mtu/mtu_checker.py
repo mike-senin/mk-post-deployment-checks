@@ -166,20 +166,20 @@ def draw_results_table(total):
     failed_tab.add_row(["Node", "Iface", "MTU set", "MTU expected", "Result"])
 
     for node_ in total:
-            ifaces = total.get(node_)
-            node_name_ = node_.split('-')[0]
-            failed_tab.add_row([node_, "", "", "", ""])
-            for iface in ifaces:
-                if node_name_ not in expectations:
+        ifaces = total.get(node_)
+        node_name_ = node_.split('-')[0]
+        failed_tab.add_row([node_, "", "", "", ""])
+        for iface in ifaces:
+            if node_name_ not in expectations:
+                continue
+            else:
+                group = expectations.get(node_name_)
+                gauge = group.get(iface)
+                mtu = ifaces.get(iface)
+                if iface not in expectations:
                     continue
-                else:
-                    group = expectations.get(node_name_)
-                    gauge = group.get(iface)
-                    mtu = ifaces.get(iface)
-                    if iface not in expectations:
-                        continue
-                    elif int(mtu) != int(gauge):
-                        failed_tab.add_row(["", iface, mtu, gauge, "FAILED"])
+                elif int(mtu) != int(gauge):
+                    failed_tab.add_row(["", iface, mtu, gauge, "FAILED"])
     print "Failed MTU interfaces:"
     print failed_tab.draw()
 
@@ -197,9 +197,10 @@ def main():
     for node, ifaces_info in network_info.iteritems():
         try:
             if 'kvm' in node:
-                kvm_info = local.cmd(node, 'cmd.run',
-                                        ["virsh list | grep jse2 | awk '{print $2}' | xargs -n1 virsh domiflist | "
-                                         "grep -v br-pxe | grep br- | awk '{print $1}'"])
+                kvm_info = local.cmd(
+                    node, 'cmd.run', [
+                        "virsh list | grep jse2 | awk '{print $2}' | xargs -n1 virsh domiflist | "
+                        "grep -v br-pxe | grep br- | awk '{print $1}'"])
                 ifaces_info = kvm_info.get(node)
             node_name = node.split('-')[0]
             node_ifaces = ifaces_info.split('\n')

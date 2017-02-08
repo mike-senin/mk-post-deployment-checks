@@ -22,7 +22,8 @@ def active_nodes(local_salt_client, skipped_nodes=None):
 @pytest.fixture
 def groups(active_nodes, skipped_group=None):
     skipped_group = skipped_group or []
-    import pdb; pdb.set_trace()
+    import pdb
+    pdb.set_trace()
     groups = [
         node.split('-')[0] for node in active_nodes
         if node not in skipped_group
