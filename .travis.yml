@@ -10,4 +10,5 @@ before_install:
     - pip install --upgrade pip
     - pip install flake8
 script:
-  - find . -name \*.py | xargs -l flake8
+  # TODO (msenin) add verification only changed python files
+  - flake8 . --ignore=F403

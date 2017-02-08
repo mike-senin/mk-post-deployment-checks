@@ -14,7 +14,7 @@ def active_nodes(local_salt_client, skipped_nodes=None):
     nodes = local_salt_client.cmd('*', 'test.ping')
     active_nodes = [
         node_name for node_name in nodes
-        if nodes[node_name] and not node_name in skipped_nodes
+        if nodes[node_name] and node_name not in skipped_nodes
     ]
     return active_nodes
 
