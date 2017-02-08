@@ -5,7 +5,7 @@ from mk_verificator import utils
 
 
 @pytest.mark.parametrize(
-    ("group"),
+    "group",
     utils.get_groups(utils.get_configuration(__file__))
 )
 def test_check_default_gateways(local_salt_client, group):
@@ -13,7 +13,7 @@ def test_check_default_gateways(local_salt_client, group):
     netstat_info = \
         local_salt_client.cmd(group, 'cmd.run', ['ip r | sed -n 1p'])
 
-    gateways =  {}
+    gateways = {}
     nodes = netstat_info.keys()
 
     for node in nodes:

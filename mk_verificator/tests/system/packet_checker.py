@@ -77,7 +77,7 @@ for group_name, nodes in groups.items():
                         if i_packet_version != j_packet_version:
                             version_conflicts.append((pkg_name, i_packet_version, j_packet_version))
                     else:
-                        i_packet_version =  node_i_pkgs[pkg_name]
+                        i_packet_version = node_i_pkgs[pkg_name]
                         missed_packets.append((pkg_name, i_packet_version))
 
                 if missed_packets:
