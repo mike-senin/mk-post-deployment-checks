@@ -1,97 +1,73 @@
-#!/usr/bin/env python
-import salt.client as client
-import texttable as tt
-
-local = client.LocalClient()
-
-pkgs_info = local.cmd('*', 'lowpkg.list_pkgs')
-nodes = pkgs_info.keys()
-
-mask_minor_pkgs = []
-
-groups = {}
-
-for node_name, node_pkgs in pkgs_info.items():
-    group_name = node_name.split('-')[0]
-    if group_name not in groups:
-        groups[group_name] = [(node_name, node_pkgs)]
-    else:
-        groups[group_name].append((node_name, node_pkgs))
-
-packets_to_skip = []
+import pytest
+import json
+from mk_verificator import utils
 
 
-def draw_table_missed_packets(node_1_name, node_2_name, pkts_data):
-    tab = tt.Texttable()
-    header = ['Packet name', 'Packet version']
-    tab.set_cols_align(['r', 'r'])
-    tab.set_cols_width([40, 40])
-    tab.header(header)
-    for pkt_name, version in pkts_data:
-        tab.add_row([pkt_name, version])
-    s = tab.draw()
-    print "Packets installed on %s, but not installed on %s" % (node_1_name, node_2_name)
-    print s
-    print
+@pytest.mark.parametrize(
+    ("group"),
+    utils.get_groups(utils.get_configuration(__file__))
+)
+def test_check_package_versions(local_salt_client, group):
+    output = local_salt_client.cmd(group, 'lowpkg.list_pkgs')
+
+    if len(output.keys()) < 2:
+        pytest.skip("Nothing to compare - only 1 node")
+
+    nodes = []
+    pkts_data = []
+    my_set = set()
+
+    for node in output:
+        nodes.append(node)
+        my_set.update(output[node].keys())
+
+    for deb in my_set:
+        row = []
+        row.append(deb)
+        for node in nodes:
+            if deb in output[node].keys():
+                row.append(output[node][deb])
+            else:
+                row.append("No package")
+        if row.count(row[1]) < len(nodes):
+            pkts_data.append(row)
+    assert len(pkts_data) <= 1, \
+        "Several problems found for {0} group: {1}".format(
+        group, json.dumps(pkts_data, indent=4))
 
 
-def draw_table_version_conflicts(node_1_name, node_2_name, pkts_data):
-    tab = tt.Texttable()
-    header = ['Packet name',
-              'Node {0} version'.format(node_1_name),
-              'Node {0} version'.format(node_2_name)]
-    tab.set_cols_align(['r', 'r', 'r'])
-    tab.set_cols_width([40, 40, 40])
-    tab.header(header)
-    for pkt_name, ver_1, ver_2 in pkts_data:
-        tab.add_row([pkt_name, ver_1, ver_2])
-    s = tab.draw()
-    print "Packets with different versions:"
-    print s
-    print
+@pytest.mark.parametrize(
+    ("group"),
+    utils.get_groups(utils.get_configuration(__file__))
+)
+def test_check_module_versions(local_salt_client, group):
+    pre_check = local_salt_client.cmd(group, 'cmd.run',
+                                      ['dpkg -l | grep "python-pip "'])
+    if pre_check.values().count('') > 0:
+        pytest.skip("pip is not installed on one or more nodes")
+    if len(pre_check.keys()) < 2:
+        pytest.skip("Nothing to compare - only 1 node")
+    output = local_salt_client.cmd(group, 'pip.freeze')
 
+    nodes = []
+    pkts_data = []
+    my_set = set()
 
-for group_name, nodes in groups.items():
-    print "-" * 140
-    if len(nodes) > 1:
+    for node in output:
+        nodes.append(node)
+        my_set.update([x.split("=")[0] for x in output[node]])
+        output[node] = dict([x.split("==") for x in output[node]])
 
-        print "Start verification for group %s" % group_name
-
-        for node_i in nodes:
-            for node_j in nodes:
-                if node_i[0] == node_j[0]:
-                    continue
-
-                node_i_name, node_j_name = node_i[0], node_j[0]
-                node_i_pkgs, node_j_pkgs = node_i[1], node_j[1]
-
-                missed_packets, version_conflicts = [], []
-
-                for pkg_name in node_i_pkgs:
-                    if pkg_name in packets_to_skip:
-                        continue
-
-                    if pkg_name in node_j_pkgs:
-                        i_packet_version = node_i_pkgs[pkg_name]
-                        j_packet_version = node_j_pkgs[pkg_name]
-                        if i_packet_version != j_packet_version:
-                            version_conflicts.append(
-                                (pkg_name, i_packet_version, j_packet_version))
-                    else:
-                        i_packet_version = node_i_pkgs[pkg_name]
-                        missed_packets.append((pkg_name, i_packet_version))
-
-                if missed_packets:
-                    draw_table_missed_packets(
-                        node_i_name, node_j_name, missed_packets)
-
-                if version_conflicts:
-                    draw_table_version_conflicts(
-                        node_i_name, node_j_name, version_conflicts)
-
-                if missed_packets or version_conflicts:
-                    print "-" * 140
-
-    else:
-        print "Verification for group %s was skipped due to count of nodes less than 2" % group_name
-    print "-" * 140
+    for deb in my_set:
+        row = []
+        row.append(deb)
+        for node in nodes:
+            if deb in output[node].keys():
+                row.append(output[node][deb])
+            else:
+                row.append("No module")
+        if row.count(row[1]) < len(nodes):
+            pkts_data.append(row)
+    assert len(pkts_data) <= 1, \
+        "Several problems found for {0} group: {1}".format(
+        group, json.dumps(pkts_data, indent=4))
