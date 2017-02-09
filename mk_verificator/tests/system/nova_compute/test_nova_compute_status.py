@@ -11,4 +11,5 @@ def test_checking_nova_compute(local_salt_client):
             computes_no_availability.append(node)
 
     assert not computes_no_availability, \
-        "Nodes where nova-compute isn't started: {}".format(computes_no_availability)
+        "Nodes where nova-compute isn't started: {}".\
+            format(computes_no_availability)
