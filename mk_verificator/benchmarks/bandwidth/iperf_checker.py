@@ -82,9 +82,9 @@ measurement_results = []
 nodes = master_client.cmd('*', 'test.ping')
 skipped_nodes = ['saml-global-01.mosci.jiocloud.com']
 active_nodes = [
-    node_name for node_name in nodes
-    if nodes[node_name] and node_name not in skipped_nodes
-    ]
+                node_name for node_name in nodes
+                if nodes[node_name] and node_name not in skipped_nodes
+                ]
 
 # TODO delete
 global_results = []
