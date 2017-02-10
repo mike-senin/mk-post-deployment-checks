@@ -1,7 +1,9 @@
-from .fixtures.base import *
+import fixtures.base
 
 from _pytest._pluggy import HookspecMarker
 
+# for pep8
+_ = fixtures.base
 
 hookspec = HookspecMarker("pytest")
 

@@ -1,11 +1,31 @@
 import pytest
 import salt.client as client
+import novaclient.client as nv_client
+import mk_verificator.utils as utils
 
 
 @pytest.fixture
 def local_salt_client():
     local = client.LocalClient()
     return local
+
+
+@pytest.fixture
+def nova_client():
+    config = utils.get_configuration(__file__)
+
+    # TODO(den) openstack catalog list
+    version = '2.1'
+
+    client = nv_client.Client(
+        version,
+        config['admin_username'],
+        config['admin_password'],
+        config['admin_project_id'],
+        config['url'],
+        service_type="compute",
+        endpoint_type=config['endpoint_type'])
+    return client
 
 
 @pytest.fixture
