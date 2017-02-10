@@ -4,7 +4,7 @@ from mk_verificator import utils
 
 
 @pytest.mark.parametrize(
-    ("node"),
+    "node",
     utils.get_groups(utils.get_configuration(__file__))
 )
 def test_list_of_repo_on_nodes(local_salt_client, node):
@@ -20,10 +20,11 @@ def test_list_of_repo_on_nodes(local_salt_client, node):
         ['cat /etc/apt/sources.list.d/*;cat /etc/apt/sources.list|grep deb'])
 
     actual_repo_list = [item.replace('/ ', ' ')
-           for item in raw_actual_info.values()[0].split('\n')]
+                        for item in raw_actual_info.values()[0].split('\n')]
 
     expected_salt_data = [repo['source'].replace('/ ', ' ')
-            for repo in info_salt.values()[0]['linux:system:repo'].values()]
+                          for repo in
+                          info_salt.values()[0]['linux:system:repo'].values()]
 
     actual_repo_list.sort()
     expected_salt_data.sort()

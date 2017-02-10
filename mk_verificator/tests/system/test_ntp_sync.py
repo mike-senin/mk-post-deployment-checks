@@ -24,9 +24,9 @@ def test_ntp_sync(local_salt_client):
         m += int(time_list[1])
         s += int(time_list[2])
         divisor += 1
-    h = h/divisor
-    m = m/divisor
-    s = s/divisor
+    h = h / divisor
+    m = m / divisor
+    s = s / divisor
 
     for node in data:
         ntime = data.get(node)

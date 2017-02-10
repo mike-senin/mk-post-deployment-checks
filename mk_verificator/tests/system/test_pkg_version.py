@@ -15,7 +15,7 @@ def test_pkg_version(local_salt_client, group):
 
     for node_name, node_pkgs in pkgs_info.items():
         group_name = node_name.split('-')[0]
-        if not groups.has_key(group_name):
+        if group_name not in groups:
             groups[group_name] = [(node_name, node_pkgs)]
         else:
             groups[group_name].append((node_name, node_pkgs))
@@ -32,7 +32,7 @@ def test_pkg_version(local_salt_client, group):
 
                     for pkg_name in node_i_pkgs:
 
-                        if node_j_pkgs.has_key(pkg_name):
+                        if pkg_name in node_j_pkgs:
                             i_packet_version = node_i_pkgs[pkg_name]
                             j_packet_version = node_j_pkgs[pkg_name]
                             if i_packet_version != j_packet_version:

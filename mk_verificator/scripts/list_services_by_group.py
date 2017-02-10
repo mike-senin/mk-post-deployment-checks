@@ -59,6 +59,7 @@ def draw_services_table(services_data):
     print s
     print
 
+
 for node_name, node_services in services_info.items():
     group_name = node_name.split('-')[0]
     if group_name not in groups:
