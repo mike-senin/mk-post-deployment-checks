@@ -24,7 +24,8 @@ def test_checking_rabbitmq_cluster(local_salt_client):
 
     d1 = required_cluster_size_dict
     d2 = actual_cluster_size_dict
-    areEqual = sorted(d1.values()) == sorted(d2.values()) and sorted(d1.keys()) == sorted(d2.keys())
+    areEqual = sorted(d1.values()) == sorted(d2.values())\
+               and sorted(d1.keys()) == sorted(d2.keys())
 
     assert areEqual, \
         '''Inconsistency found within cloud. RabbitMQ cluster
