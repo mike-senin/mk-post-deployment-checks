@@ -12,7 +12,7 @@ def test_mtu(local_salt_client, group):
     total = {}
     failed_ifaces = {}
 
-    with open("config.yaml") as stream:
+    with open("gauges.json") as stream:
         gauges = json.load(stream)
 
     network_info = local_salt_client.cmd(group, 'cmd.run', ['sudo ls /sys/class/net/'])
