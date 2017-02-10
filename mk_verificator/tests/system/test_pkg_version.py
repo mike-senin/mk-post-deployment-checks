@@ -1,56 +1,52 @@
 import pytest
 from mk_verificator import utils
-import json
 
 
 @pytest.mark.parametrize(
     "group",
-    utils.get_groups(utils.get_configuration(__file__))
-)
-def test_mtu(local_salt_client, group):
-    skipped_ifaces = ["bonding_masters", "lo"]
-    total = {}
-    failed_ifaces = {}
+    utils.get_groups(utils.get_configuration(__file__)))
+def test_pkg_version(local_salt_client, group):
 
-    with open("config.yaml") as stream:
-        gauges = json.load(stream)
+    pkgs_info = local_salt_client.cmd(group, 'lowpkg.list_pkgs')
 
-    network_info = local_salt_client.cmd(group, 'cmd.run', ['sudo ls /sys/class/net/'])
+    groups = {}
 
-    for node, ifaces_info in network_info.iteritems():
-        if 'kvm' in node:
-            kvm_info = local_salt_client.cmd(node, 'cmd.run',
-                                             ["virsh list | grep jse2 | awk '{print $2}' | xargs -n1 virsh domiflist | "
-                                              "grep -v br-pxe | grep br- | awk '{print $1}'"])
-            ifaces_info = kvm_info.get(node)
-        node_name = node.split('-')[0]
-        node_ifaces = ifaces_info.split('\n')
-        if node_name not in gauges:
-            continue
+    missed_pkgs, version_conflicts = [], []
+
+    for node_name, node_pkgs in pkgs_info.items():
+        group_name = node_name.split('-')[0]
+        if not groups.has_key(group_name):
+            groups[group_name] = [(node_name, node_pkgs)]
         else:
-            ifaces = {}
-            for iface in node_ifaces:
-                if iface in skipped_ifaces:
-                    continue
-                iface_mtu = local_salt_client.cmd(node, 'cmd.run',
-                                                  ['cat /sys/class/net/{}/mtu'.format(iface)])
-                ifaces[iface] = iface_mtu.get(node)
-            total[node] = ifaces
+            groups[group_name].append((node_name, node_pkgs))
 
-    for node_ in total:
-        ifaces = total.get(node_)
-        node_name_ = node_.split('-')[0]
+    for group_name, nodes in groups.items():
+        if len(nodes) > 1:
+            for node_i in nodes:
+                for node_j in nodes:
+                    if node_i[0] == node_j[0]:
+                        continue
 
-        for iface in ifaces:
-            if node_name_ not in gauges:
-                continue
-            else:
-                group = gauges.get(node_name_)
-                gauge = group.get(iface)
-                mtu = ifaces.get(iface)
-                if iface not in gauges:
-                    continue
-                elif int(mtu) != int(gauge):
-                    failed_ifaces[node_].append(iface)
+                    node_i_name, node_j_name = node_i[0], node_j[0]
+                    node_i_pkgs, node_j_pkgs = node_i[1], node_j[1]
 
-    assert not failed_ifaces, "Nodes with iface mismatch: ".format(failed_ifaces)
+                    for pkg_name in node_i_pkgs:
+
+                        if node_j_pkgs.has_key(pkg_name):
+                            i_packet_version = node_i_pkgs[pkg_name]
+                            j_packet_version = node_j_pkgs[pkg_name]
+                            if i_packet_version != j_packet_version:
+                                version_conflicts.append((pkg_name, i_packet_version, j_packet_version))
+                        else:
+                            i_packet_version = node_i_pkgs[pkg_name]
+                            missed_pkgs.append((pkg_name, i_packet_version))
+
+                    if missed_pkgs:
+                        assert not missed_pkgs, "Pkgs mismatch for node {} and {}:\n{}"\
+                            .format(node_i_name, node_j_name, missed_pkgs)
+
+                    if version_conflicts:
+                        assert not version_conflicts, "Version conflicts for node {} and {}:\n{}"\
+                            .format(node_i_name, node_j_name, version_conflicts)
+        else:
+            print "Verification for group %s was skipped due to count of nodes less than 2" % group_name
