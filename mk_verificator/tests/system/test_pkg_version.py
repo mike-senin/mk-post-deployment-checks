@@ -36,17 +36,24 @@ def test_pkg_version(local_salt_client, group):
                             i_packet_version = node_i_pkgs[pkg_name]
                             j_packet_version = node_j_pkgs[pkg_name]
                             if i_packet_version != j_packet_version:
-                                version_conflicts.append((pkg_name, i_packet_version, j_packet_version))
+                                version_conflicts.append((pkg_name,
+                                                          i_packet_version,
+                                                          j_packet_version))
                         else:
                             i_packet_version = node_i_pkgs[pkg_name]
                             missed_pkgs.append((pkg_name, i_packet_version))
 
                     if missed_pkgs:
-                        assert not missed_pkgs, "Pkgs mismatch for node {} and {}:\n{}"\
+                        assert not missed_pkgs, "Pkgs mismatch for node " \
+                                                "{} and {}:\n{}"\
                             .format(node_i_name, node_j_name, missed_pkgs)
 
                     if version_conflicts:
-                        assert not version_conflicts, "Version conflicts for node {} and {}:\n{}"\
-                            .format(node_i_name, node_j_name, version_conflicts)
+                        assert not version_conflicts, "Version conflicts for "\
+                                                      "node {} and {}:\n{}"\
+                            .format(node_i_name,
+                                    node_j_name,
+                                    version_conflicts)
         else:
-            print "Verification for group %s was skipped due to count of nodes less than 2" % group_name
+            print "Verification for group %s was skipped " \
+                  "due to count of nodes less than 2" % group_name

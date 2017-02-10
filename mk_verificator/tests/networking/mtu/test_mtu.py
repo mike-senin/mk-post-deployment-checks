@@ -15,13 +15,17 @@ def test_mtu(local_salt_client, group):
     with open("gauges.json") as stream:
         gauges = json.load(stream)
 
-    network_info = local_salt_client.cmd(group, 'cmd.run', ['sudo ls /sys/class/net/'])
+    network_info = local_salt_client.cmd(group, 'cmd.run',
+                                         ['sudo ls /sys/class/net/'])
 
     for node, ifaces_info in network_info.iteritems():
         if 'kvm' in node:
             kvm_info = local_salt_client.cmd(node, 'cmd.run',
-                                             ["virsh list | grep jse2 | awk '{print $2}' | xargs -n1 virsh domiflist | "
-                                              "grep -v br-pxe | grep br- | awk '{print $1}'"])
+                                             ["virsh list | grep jse2 | "
+                                              "awk '{print $2}' | "
+                                              "xargs -n1 virsh domiflist | "
+                                              "grep -v br-pxe | grep br- | "
+                                              "awk '{print $1}'"])
             ifaces_info = kvm_info.get(node)
         node_name = node.split('-')[0]
         node_ifaces = ifaces_info.split('\n')
@@ -33,7 +37,8 @@ def test_mtu(local_salt_client, group):
                 if iface in skipped_ifaces:
                     continue
                 iface_mtu = local_salt_client.cmd(node, 'cmd.run',
-                                                  ['cat /sys/class/net/{}/mtu'.format(iface)])
+                                                  ['cat /sys/class/'
+                                                   'net/{}/mtu'.format(iface)])
                 ifaces[iface] = iface_mtu.get(node)
             total[node] = ifaces
 
@@ -53,4 +58,5 @@ def test_mtu(local_salt_client, group):
                 elif int(mtu) != int(gauge):
                     failed_ifaces[node_].append(iface)
 
-    assert not failed_ifaces, "Nodes with iface mismatch: ".format(failed_ifaces)
+    assert not failed_ifaces, "Nodes with " \
+                              "iface mismatch: ".format(failed_ifaces)

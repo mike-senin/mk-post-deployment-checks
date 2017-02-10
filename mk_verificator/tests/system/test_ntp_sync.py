@@ -39,4 +39,5 @@ def test_ntp_sync(local_salt_client):
             # TODO: add correct verification for seconds difference
             fail[node] = "{}h {}m {}s".format(ntime[0], ntime[1], ntime[2])
 
-    assert not fail, 'AVG time: {}h {}m {}s\nNodes with time mismatch: {}'.format(h, m, s, fail)
+    assert not fail, 'AVG time: {}h {}m {}s\nNodes with ' \
+                     'time mismatch: {}'.format(h, m, s, fail)
