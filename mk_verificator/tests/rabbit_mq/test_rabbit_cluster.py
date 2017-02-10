@@ -1,32 +1,43 @@
-__author__ = 'pivanets'
 import json
+import re
 
 
 def test_checking_rabbitmq_cluster(local_salt_client):
-    cs = local_salt_client.cmd(
+    # request pillar data from rmq nodes
+    rabbitmq_pillar_data = local_salt_client.cmd(
         'rmq*',
         'cmd.run',
         ['salt-call pillar.data --output json rabbitmq:cluster'])
 
-    # create dictionary {node:required_cluster_size} that will be
-    # compared to actual cluster size
-    required_cluster_size_dict = {}
-
-    [required_cluster_size_dict.update(
-        {node: len(cs.keys())}) for node in cs.keys()]
-
-    # in case if node cluster size differs from the required one, control dictionary
-    # is updated with {node:cluster_size_from_the_node}
+    # creating dictionary {node:cluster_size_for_the_node}
+    # with required cluster size for each node
     control_dict = {}
-    for node in cs:
-        data = json.loads(cs[node])
-
+    required_cluster_size_dict = {}
+    for node in rabbitmq_pillar_data:
+        data = json.loads(rabbitmq_pillar_data[node])
         cluster_size_from_the_node = len(data['local']['rabbitmq:cluster']['members'])
-        if required_cluster_size_dict[node] != cluster_size_from_the_node:
-            control_dict.update({node:cluster_size_from_the_node})
+        required_cluster_size_dict.update({node: cluster_size_from_the_node})
+
+    # request actual data from rmq nodes
+    rabbit_actual_data = local_salt_client.cmd(
+        'rmq*',
+        'cmd.run',
+        ['rabbitmqctl cluster_status'])
+
+    # find actual cluster size for each node
+    for node in rabbit_actual_data:
+        list_of_nodes = 0
+        for line in rabbit_actual_data[node].split('\n'):
+            if 'running_nodes' in line:
+                list_of_nodes = re.findall(r'\'rabbit@(.+?)\'', line, re.IGNORECASE)
+
+        # update control dictionary with values {node:actual_cluster_size_for_node}
+        if required_cluster_size_dict[node] != len(list_of_nodes):
+            control_dict.update({node:list_of_nodes})
 
     assert not len(control_dict), \
         '''Inconsistency found within cloud. RabbitMQ cluster
               is probably broken, the cluster size for each node should be:
-              {} but the following nodes has other values: {}'''.format(len(cs.keys()),
-                                                                        control_dict)
+              {} but the following nodes has other values: {}'''.format(
+                  len(required_cluster_size_dict.keys()),
+                  control_dict)
