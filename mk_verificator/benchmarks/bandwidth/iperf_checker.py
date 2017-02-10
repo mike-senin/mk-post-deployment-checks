@@ -1,8 +1,7 @@
 #!/usr/bin/env python
-import salt.config as config
+# import salt.config as config
 import salt.client as client
 import texttable as tt
-
 
 groups = {
     'ceph': {
@@ -77,16 +76,15 @@ groups = {
 
 }
 
-
 master_client = client.LocalClient()
 
 measurement_results = []
 nodes = master_client.cmd('*', 'test.ping')
 skipped_nodes = ['saml-global-01.mosci.jiocloud.com']
-active_nodes = [
-    node_name for node_name in nodes
-    if nodes[node_name] and not node_name in skipped_nodes
-]
+active_nodes = []
+#                node_name for node_name in nodes
+#                if nodes[node_name] and node_name not in skipped_nodes
+#                ]
 
 # TODO delete
 global_results = []
@@ -153,7 +151,8 @@ def _add_to_global_table(
 
 def _prepare_network_info(group_name_i, group_name_j):
     if not (group_name_i in groups and group_name_j in groups):
-        print "Test skipped for groups: {0} and {1}".format(group_name_i, group_name_j)
+        print "Test skipped for groups: {0} and {1}".format(group_name_i,
+                                                            group_name_j)
         return
 
     available_networks_for_pair = \
@@ -208,9 +207,11 @@ def start_network_measurements():
                 node_i = active_nodes[_i]
                 node_j = active_nodes[_j]
                 try:
-                    print "Start measurement between {} and {}".format(node_i, node_j)
+                    print "Start measurement between {} and {}".format(node_i,
+                                                                       node_j)
                     _start_iperf_between_hosts(node_i, node_j)
-                    print "Measurement between {} and {} have been finished".format(node_i, node_j)
+                    print "Measurement between {} and {} have been finished" \
+                        .format(node_i, node_j)
                 except Exception as e:
                     print "Failed for {0} {1}".format(node_i, node_j)
                     print e

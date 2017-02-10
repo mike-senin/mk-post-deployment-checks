@@ -28,7 +28,8 @@ def draw_table_missed_services(node_1_name, node_2_name, services_data):
     for service_name in services_data:
         tab.add_row([service_name])
     s = tab.draw()
-    print "Service installed on %s, but not installed on %s" % (node_1_name, node_2_name)
+    print "Service installed on %s, but not installed on %s" % (node_1_name,
+                                                                node_2_name)
     print s
     print
 
@@ -62,5 +63,6 @@ for group_name, nodes in groups.items():
                     print "-" * 140
 
     else:
-        print "Verification for group %s was skipped due to count of nodes less than 2" % group_name
+        print "Verification for group %s was skipped " \
+              "due to count of nodes less than 2" % group_name
     print "-" * 140
