@@ -1,19 +1,21 @@
 import pytest
 from mk_verificator import utils
+import json
 
 
 @pytest.mark.parametrize(
-    "groups",
+    "group",
     utils.get_groups(utils.get_configuration(__file__))
 )
-def test_mtu(local_salt_client, groups):
+def test_mtu(local_salt_client, group):
     skipped_ifaces = ["bonding_masters", "lo"]
-    TOTAL = {}
+    total = {}
     failed_ifaces = {}
 
-    gauges = utils.get_expected_mtu(__file__)
+    with open("config.yaml") as stream:
+        gauges = json.load(stream)
 
-    network_info = local_salt_client.cmd(groups, 'cmd.run', ['sudo ls /sys/class/net/'])
+    network_info = local_salt_client.cmd(group, 'cmd.run', ['sudo ls /sys/class/net/'])
 
     for node, ifaces_info in network_info.iteritems():
         if 'kvm' in node:
@@ -24,7 +26,6 @@ def test_mtu(local_salt_client, groups):
         node_name = node.split('-')[0]
         node_ifaces = ifaces_info.split('\n')
         if node_name not in gauges:
-            # print "Node {} is not matching expected groups!".format(node)
             continue
         else:
             ifaces = {}
@@ -34,10 +35,10 @@ def test_mtu(local_salt_client, groups):
                 iface_mtu = local_salt_client.cmd(node, 'cmd.run',
                                                   ['cat /sys/class/net/{}/mtu'.format(iface)])
                 ifaces[iface] = iface_mtu.get(node)
-            TOTAL[node] = ifaces
+            total[node] = ifaces
 
-    for node_ in TOTAL:
-        ifaces = TOTAL.get(node_)
+    for node_ in total:
+        ifaces = total.get(node_)
         node_name_ = node_.split('-')[0]
 
         for iface in ifaces:
