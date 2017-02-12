@@ -1,32 +1,8 @@
 from abc import ABCMeta, abstractproperty, abstractmethod
-from functools import reduce
-
-
-class DerivationRegistry(type):
-    def __init__(cls, name, bases, cls_dict):
-        type.__init__(cls, name, bases, cls_dict)
-        cls._subclasses = set()
-        for base in bases:
-            if isinstance(base, DerivationRegistry):
-                base._subclasses.add(cls)
-
-    def getSubclasses(cls):
-        return reduce(
-                set.union,
-                (succ.getSubclasses() for succ in cls._subclasses if
-                 isinstance(succ, DerivationRegistry)),
-                cls._subclasses
-        )
-
-
-class ScenarioMixin(ABCMeta, DerivationRegistry):
-    def __init__(cls, name, bases, attr):
-        ABCMeta.__init__(cls, name, bases, attr)
-        DerivationRegistry.__init__(cls, name, bases, attr)
 
 
 class Scenario(object):
-    __metaclass__ = ScenarioMixin
+    __metaclass__ = ABCMeta
 
     @abstractproperty
     def result(self):

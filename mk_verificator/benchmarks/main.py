@@ -1,16 +1,9 @@
-from mk_verificator.benchmarks.engine.scenario import Scenario
-
+from mk_verificator.benchmarks.engine.discover import discover
 
 if __name__ == '__main__':
-    # TODO (msenin) add discover class and detector of scenario directories
-    scenarios = []
-    for i in ['test_1', 'test_2']:
-        path = "mk_verificator.benchmarks.scenarios.%s.scenario" % i
-        scenarios.append(__import__(path))
+    discover()
 
-
-    print Scenario.__subclasses__()
-    print(Scenario.getSubclasses())
+    # print(Scenario.getSubclasses())
 
 
     #
