@@ -1,11 +1,18 @@
 import json
 import re
+import pytest
+from mk_verificator import utils
 
 
-def test_checking_rabbitmq_cluster(local_salt_client):
+@pytest.mark.parametrize(
+    ("group"),
+    utils.get_groups(utils.get_configuration(__file__))
+)
+
+def test_checking_rabbitmq_cluster(local_salt_client, group):
     # request pillar data from rmq nodes
     rabbitmq_pillar_data = local_salt_client.cmd(
-        'rmq*',
+        group,
         'cmd.run',
         ['salt-call pillar.data --output json rabbitmq:cluster'])
 
@@ -20,7 +27,7 @@ def test_checking_rabbitmq_cluster(local_salt_client):
 
     # request actual data from rmq nodes
     rabbit_actual_data = local_salt_client.cmd(
-        'rmq*',
+        group,
         'cmd.run',
         ['rabbitmqctl cluster_status'])
 
