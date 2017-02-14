@@ -1,4 +1,13 @@
-def test_ntp_sync(local_salt_client):
+import pytest
+import json
+from mk_verificator import utils
+
+
+@pytest.mark.parametrize(
+    ("group"),
+    utils.get_groups(utils.get_configuration(__file__))
+)
+def test_ntp_sync(group, local_salt_client):
 
     data = {}
     node_times_list = []
@@ -8,11 +17,11 @@ def test_ntp_sync(local_salt_client):
     hour_gauge = 0
     minute_gauge = 0
     second_gauge = 5
-    divisor = -1
+    divisor = 0
 
     fail = {}
 
-    nodes_info = local_salt_client.cmd('*', 'cmd.run', ['date +"%H %M %S"'])
+    nodes_info = local_salt_client.cmd(group, 'cmd.run', ['date +"%H %M %S"'])
 
     for node, time in nodes_info.iteritems():
         node_times = time.split(' ')
