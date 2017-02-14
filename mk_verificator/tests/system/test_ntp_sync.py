@@ -1,5 +1,6 @@
 import pytest
 from mk_verificator import utils
+# TODO (vkhalin): use unix time represented with 1 digit
 
 
 @pytest.mark.parametrize(
@@ -44,7 +45,7 @@ def test_ntp_sync(group, local_salt_client):
         elif (int(ntime[1]) - minute) != minute_gauge:
             fail[node] = "{}h {}m {}s".format(ntime[0], ntime[1], ntime[2])
         elif (int(ntime[2]) - second) > second_gauge:
-            # TODO: add correct verification for seconds difference
+            # TODO (vkhalin): add correct verification for seconds difference
             fail[node] = "{}h {}m {}s".format(ntime[0], ntime[1], ntime[2])
 
     assert not fail, 'AVG time: {}h {}m {}s\nNodes with ' \
