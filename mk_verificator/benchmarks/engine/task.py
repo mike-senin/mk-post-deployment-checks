@@ -43,14 +43,20 @@ class Task(object):
 
     # TODO
     def start(self, results_array):
+        results = {}
         for task_phase in ['setup', 'main', 'teardown']:
-            results = 'None'
+            phase_results = {'results': '', 'state': '', 'exceptions': None}
             try:
+                # TODO (msenin) return result within functions
+                # and do not use intermediate variable
                 getattr(self.scenario_body, task_phase)()
-                results = self.scenario_body.result
-            except:
-                self.state = 'error'
-                results = self.scenario_body.result
-            finally:
-                results_array[self.uuid] = results
                 self.state = 'finished'
+            except Exception as e:
+                self.state = 'error'
+                phase_results['exceptions'] = str(e)
+            finally:
+                phase_results['results'] = self.scenario_body.result
+                phase_results['state'] = str(self.state)
+                results[task_phase] = phase_results
+
+        results_array[self.uuid] = results

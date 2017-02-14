@@ -7,8 +7,8 @@ class ScenarioOne(Scenario):
 
     result = None
 
-    def __init__(self, param):
-        self.name = param
+    def __init__(self):
+        self.name = '1'
 
     def setup(self):
         print "Setup %s with param %s" % (self.__class__.__name__, self.name)
@@ -20,4 +20,5 @@ class ScenarioOne(Scenario):
 
     def teardown(self):
         print "Teardown %s with param %s" % (self.__class__.__name__, self.name)
+        raise Exception('I\'m gonna raise exception in the teardown')
 

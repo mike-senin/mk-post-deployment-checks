@@ -27,19 +27,11 @@ class Runner(object):
             )
             processes[task.uuid] = (p, p.pid, p.is_alive())
 
-        # TODO (msenin) delete print
-        print 'start tasks %s' % str(tasks)
-
         for process, _, _ in processes.values():
             process.start()
 
         for process, _, _ in  processes.values():
             process.join()
-
-        # TODO (msenin) delete print
-        print 'tasks were finished %s' % str(tasks)
-        # TODO (msenin) delete print
-        print self.results
 
     def start(self):
         for task in self.tasks:
