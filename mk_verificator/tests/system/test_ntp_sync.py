@@ -2,6 +2,7 @@ import pytest
 from mk_verificator import utils
 # TODO (vkhalin): use unix time represented with 1 digit
 
+
 @pytest.mark.parametrize(
     ("group"),
     utils.get_groups(utils.get_configuration(__file__))

@@ -1,6 +1,5 @@
 import pytest
 from mk_verificator import utils
-import json
 
 
 @pytest.mark.parametrize(
