@@ -199,8 +199,10 @@ def main():
             if 'kvm' in node:
                 kvm_info = local.cmd(
                     node, 'cmd.run', [
-                        "virsh list | grep jse2 | awk '{print $2}' | xargs -n1 virsh domiflist | "
-                        "grep -v br-pxe | grep br- | awk '{print $1}'"])
+                        "virsh list | grep jse2 | "
+                        "awk '{print $2}' | xargs -n1 virsh domiflist | "
+                        "grep -v br-pxe | grep br- | awk '{print $1}'"]
+                )
                 ifaces_info = kvm_info.get(node)
             node_name = node.split('-')[0]
             node_ifaces = ifaces_info.split('\n')
