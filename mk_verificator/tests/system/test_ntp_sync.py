@@ -84,5 +84,6 @@ def main():
     draw_results_table(data_to_draw)
     print "\nDONE"
 
+
 if __name__ == "__main__":
     main()

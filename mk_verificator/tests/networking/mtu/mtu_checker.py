@@ -219,5 +219,6 @@ def main():
     draw_results_table(TOTAL)
     print "\nDONE"
 
+
 if __name__ == "__main__":
     main()
