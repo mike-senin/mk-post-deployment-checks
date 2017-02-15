@@ -20,5 +20,5 @@ def test_ntp_sync(group, local_salt_client):
                         (int(time) - saltmaster_time) < -30:
             fail[node] = time
 
-    assert not fail, 'SaltMaster time: {}\nNodes with ' \
-                     'time mismatch:\n {}'.format(saltmaster_time, fail)
+    assert not fail, 'SaltMaster time: {}\nNodes with time mismatch:\n {}' \
+        .format(saltmaster_time, fail)
