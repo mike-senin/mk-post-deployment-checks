@@ -34,7 +34,24 @@ def get_groups(config):
         if group_name not in skipped_group and group_name not in groups:
             groups.append(group_name)
 
-    return groups
+    test_groups = []
+    groups_from_config = config.get('groups')
+    # check if config.yaml contains `groups` key
+    if groups_from_config is not None:
+        invalid_groups = []
+        for group in groups_from_config:
+            # check if group name from config
+            # is substring of one of the groups
+            grp = [x for x in groups if group in x]
+            if grp:
+                test_groups.append(grp[0])
+            else:
+                invalid_groups.append(group)
+        if invalid_groups:
+            raise ValueError('Config file contains'
+                             ' invalid groups name: {}'.format(invalid_groups))
+
+    return test_groups if test_groups else groups
 
 
 def get_configuration(path_to_test):
