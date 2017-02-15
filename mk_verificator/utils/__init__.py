@@ -38,7 +38,19 @@ def get_groups(config):
 
 
 def get_configuration(path_to_test):
-    test_folder = os.path.dirname(os.path.abspath(path_to_test))
-    config_file = '/'.join([test_folder, "config.yaml"])
-    config = yaml.load(open(config_file, 'r'))
-    return config
+    """function returns configuration for environment
+
+    and for test if it's specified"""
+    global_config_file = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "../global_config.yaml")
+    with open(global_config_file, 'r') as file:
+        global_config = yaml.load(file)
+
+    config_file = os.path.join(
+        os.path.dirname(os.path.abspath(path_to_test)), "config.yaml")
+
+    if os.path.exists(config_file):
+        with open(config_file, 'r') as file:
+            global_config.update(yaml.load(file))
+
+    return global_config
