@@ -1,0 +1,8 @@
+---
+- name: ScenarioOne
+  params:
+    param: name
+
+- name: ScenarioTwo
+  params:
+    param: name2

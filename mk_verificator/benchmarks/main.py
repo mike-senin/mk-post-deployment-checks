@@ -1,10 +1,19 @@
 import argparse
 import time
+import yaml
 
 from mk_verificator.benchmarks.engine.discover import discover
 from mk_verificator.benchmarks.engine import scenario_convertor
 from mk_verificator.benchmarks.engine.runner import Runner
 
+
+
+def cli():
+    # 1. discover and show tests
+    # 2. run tests
+    # 3. show results
+    # 4. init database
+    pass
 
 
 def parse_args():
@@ -15,6 +24,9 @@ if __name__ == '__main__':
     # 1. discover scenarios
     discovered_scenarios = discover()
 
+    input_scenarios_scheme_file = 'scenario.yaml'
+
+    scenarios_scheme = yaml.load(open(input_scenarios_scheme_file, 'r'))
     # 2. filter by input yaml
     # TODO (msenin) add filter
     scenarios = discovered_scenarios
