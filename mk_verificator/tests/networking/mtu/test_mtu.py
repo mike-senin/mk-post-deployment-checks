@@ -27,9 +27,9 @@ def test_mtu(local_salt_client, group):
                                               "grep -v br-pxe | grep br- | "
                                               "awk '{print $1}'"])
             ifaces_info = kvm_info.get(node)
-        node_name = node.split('-')[0]
+        group_name = node.split('-')[0]
         node_ifaces = ifaces_info.split('\n')
-        if node_name not in expected_mtu:
+        if group_name not in expected_mtu:
             continue
         else:
             ifaces = {}
@@ -44,13 +44,13 @@ def test_mtu(local_salt_client, group):
 
     for node in total:
         ifaces = total.get(node)
-        node_name_ = node.split('-')[0]
+        group_name = node.split('-')[0]
 
         for iface in ifaces:
-            if node_name_ not in expected_mtu:
+            if group_name not in expected_mtu:
                 continue
             else:
-                group = expected_mtu.get(node_name_)
+                group = expected_mtu.get(group_name)
                 gauge = group.get(iface)
                 mtu = ifaces.get(iface)
                 if iface not in expected_mtu:
@@ -59,4 +59,4 @@ def test_mtu(local_salt_client, group):
                     failed_ifaces[node].append(iface)
 
     assert not failed_ifaces, "Nodes with " \
-                              "iface mismatch: ".format(failed_ifaces)
+                              "iface mismatch: {}".format(failed_ifaces)

@@ -1,52 +1,24 @@
 import pytest
 from mk_verificator import utils
-# TODO (vkhalin): use unix time represented with 1 digit
 
 
 @pytest.mark.parametrize(
-    ("group"),
+    "group",
     utils.get_groups(utils.get_configuration(__file__))
 )
 def test_ntp_sync(group, local_salt_client):
-
-    data = {}
-    node_times_list = []
-    hour = 0
-    minute = 0
-    second = 0
-    hour_gauge = 0
-    minute_gauge = 0
-    second_gauge = 5
-    divisor = 0
-
     fail = {}
 
-    nodes_info = local_salt_client.cmd(group, 'cmd.run', ['date +"%H %M %S"'])
+    saltmaster_time = int(local_salt_client.cmd('cfg-01*',
+                                                'cmd.run',
+                                                ['date +%s']).values()[0])
 
-    for node, time in nodes_info.iteritems():
-        node_times = time.split(' ')
-        data[node] = node_times
-        node_times_list.append(node_times)
+    nodes_time = local_salt_client.cmd(group, 'cmd.run', ['date +%s'])
 
-    for time_list in node_times_list:
-        hour += int(time_list[0])
-        minute += int(time_list[1])
-        second += int(time_list[2])
-        divisor += 1
-    hour = hour / divisor
-    minute = minute / divisor
-    second = second / divisor
+    for node, time in nodes_time.iteritems():
+        if (int(time) - saltmaster_time) > 30 or \
+                        (int(time) - saltmaster_time) < -30:
+            fail[node] = time
 
-    for node in data:
-        ntime = data.get(node)
-
-        if (int(ntime[0]) - hour) != hour_gauge:
-            fail[node] = "{}h {}m {}s".format(ntime[0], ntime[1], ntime[2])
-        elif (int(ntime[1]) - minute) != minute_gauge:
-            fail[node] = "{}h {}m {}s".format(ntime[0], ntime[1], ntime[2])
-        elif (int(ntime[2]) - second) > second_gauge:
-            # TODO (vkhalin): add correct verification for seconds difference
-            fail[node] = "{}h {}m {}s".format(ntime[0], ntime[1], ntime[2])
-
-    assert not fail, 'AVG time: {}h {}m {}s\nNodes with ' \
-                     'time mismatch: {}'.format(hour, minute, second, fail)
+    assert not fail, 'SaltMaster time: {}\nNodes with ' \
+                     'time mismatch:\n {}'.format(saltmaster_time, fail)
