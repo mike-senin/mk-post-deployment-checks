@@ -34,8 +34,9 @@ class Node(object):
 
     def __exit__(self, extype, exval, trace):
         if extype:
-            msg = "SSH Manager: exception"
+            pass
             # TODO(msenin) uncomment after logging module review
+            # msg = "SSH Manager: exception"
             # self.logger.error(msg, exc_info=(extype, exval, trace))
 
         try:
@@ -89,8 +90,8 @@ class Node(object):
         try:
             stdin, stdout, stderr = self.ssh.exec_command(command)
         except AttributeError as NoOpenSession:
-            msg = "SSH Manager: no conn for {0}".format(self.id)
             # TODO(msenin) uncomment after logging module review
+            # msg = "SSH Manager: no conn for {0}".format(self.id)
             # self.logger.error(msg)
             raise NoOpenSession
 
@@ -116,7 +117,7 @@ class Node(object):
                 if len(rl) > 0:
                     output = output + channel.recv(1024)
             return output
-        except Exception as e:
+        except Exception:  # as e:
             pass
             # TODO(msenin) uncomment after logging module review
             # self.logger.error(e)
