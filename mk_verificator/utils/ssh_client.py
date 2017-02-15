@@ -83,8 +83,8 @@ class Node(object):
         if sudo:
             command = "sudo {0}".format(command)
 
-        msg = "{0} ({1}): {2}".format(self.id, self.hostname, command)
         # TODO(msenin) uncomment after logging module review
+        # msg = "{0} ({1}): {2}".format(self.id, self.hostname, command)
         # self.logger.debug(msg)
 
         try:
