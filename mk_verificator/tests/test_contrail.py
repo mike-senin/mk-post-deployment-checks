@@ -1,5 +1,3 @@
-
-
 def test_contrail_compute_status(local_salt_client):
     cs = local_salt_client.cmd(
         'cpu*', 'cmd.run', ['contrail-status | grep -Pv \'(==|^$)\'']
@@ -16,6 +14,7 @@ def test_contrail_compute_status(local_salt_client):
                 broken_services.append(err_msg)
 
     assert not broken_services, 'Broken services: {}'.format(broken_services)
+
 
 def test_contrail_node_status(local_salt_client):
     cs = local_salt_client.cmd(
@@ -34,6 +33,7 @@ def test_contrail_node_status(local_salt_client):
                 broken_services.append(err_msg)
 
     assert not broken_services, 'Broken services: {}'.format(broken_services)
+
 
 def test_contrail_vrouter_count(local_salt_client):
     cs = local_salt_client.cmd(
