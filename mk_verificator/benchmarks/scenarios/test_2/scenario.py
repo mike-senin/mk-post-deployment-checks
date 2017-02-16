@@ -6,9 +6,8 @@ class ScenarioTwo(Scenario):
 
     result = None
 
-    def __init__(self):
-        self.name = '2'
-
+    def __init__(self, param):
+        self.name = param
 
     def setup(self):
         print "Setup %s with param %s" % (self.__class__.__name__, self.name)
@@ -20,7 +19,6 @@ class ScenarioTwo(Scenario):
             self.__class__.__name__, self.name)
         time.sleep(20)
         self.result = 'bah, babah'
-
 
     def teardown(self):
         print "Teardown %s with param %s" % (self.__class__.__name__, self.name)

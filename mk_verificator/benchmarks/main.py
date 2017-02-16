@@ -3,8 +3,11 @@ import time
 import yaml
 
 from mk_verificator.benchmarks.engine.discover import discover
-from mk_verificator.benchmarks.engine import scenario_convertor
 from mk_verificator.benchmarks.engine.runner import Runner
+
+from mk_verificator.benchmarks.engine import scenario_convertor, \
+    filter_scenarios, scheme_parser
+
 
 
 
@@ -26,20 +29,25 @@ if __name__ == '__main__':
 
     input_scenarios_scheme_file = 'scenario.yaml'
 
-    scenarios_scheme = yaml.load(open(input_scenarios_scheme_file, 'r'))
-    # 2. filter by input yaml
-    # TODO (msenin) add filter
-    scenarios = discovered_scenarios
+    scenarios_scheme = scheme_parser(input_scenarios_scheme_file)
+
+    scenarios = filter_scenarios(discovered_scenarios,
+                                 scenarios_scheme)
 
     # 3. init scenarios
     # TODO (msenin) ADD skipper for broken tests
     # (when have no possibility to init instance of the class)
     # Also we have to have possibility to pass additional arguments
     # to the tests
-    scenarios = [scenario() for scenario in scenarios]
+
+    init_scenarios = []
+
+    for scenario_class, scenario_data in zip(scenarios, scenarios_scheme):
+        kwargs = scenario_data.get('params')
+        init_scenarios.append(scenario_class(**kwargs))
 
     # 4. convert scenario to the task
-    tasks = scenario_convertor(scenarios)
+    tasks = scenario_convertor(init_scenarios)
 
     # 5. put tasks set to the runner
     # TODO (msenin) move this logic to the engine __init__.py

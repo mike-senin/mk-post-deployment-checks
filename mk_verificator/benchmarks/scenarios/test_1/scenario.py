@@ -7,8 +7,8 @@ class ScenarioOne(Scenario):
 
     result = None
 
-    def __init__(self):
-        self.name = '1'
+    def __init__(self, param):
+        self.name = param
 
     def setup(self):
         print "Setup %s with param %s" % (self.__class__.__name__, self.name)

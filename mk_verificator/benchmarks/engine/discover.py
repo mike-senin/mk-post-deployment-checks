@@ -9,8 +9,6 @@ def discover():
     current_file_path = os.path.abspath(os.path.dirname(__file__))
     scenario_folder = os.path.join(current_file_path, '../scenarios/')
 
-    print(scenario_folder)
-
     scenario_folders = filter(
         lambda x: os.path.isdir(os.path.join(scenario_folder, x)),
             os.listdir(scenario_folder)
