@@ -1,69 +1,36 @@
-#!/usr/bin/env python
-import salt.client as client
-import texttable as tt
-
-local = client.LocalClient()
-
-pkgs_info = local.cmd('*', 'service.get_all')
-nodes = pkgs_info.keys()
-
-groups = {}
-
-for node_name, node_services in pkgs_info.items():
-    group_name = node_name.split('-')[0]
-    if group_name not in groups:
-        groups[group_name] = []
-    else:
-        groups[group_name].append((node_name, node_services))
-
-services_to_skip = []
+import pytest
+import json
+from mk_verificator import utils
 
 
-def draw_table_missed_services(node_1_name, node_2_name, services_data):
-    tab = tt.Texttable()
-    header = ['Service name']
-    tab.set_cols_align(['r'])
-    tab.set_cols_width([40])
-    tab.header(header)
-    for service_name in services_data:
-        tab.add_row([service_name])
-    s = tab.draw()
-    print "Service installed on %s, but not installed on %s" % (
-        node_1_name, node_2_name
-    )
-    print s
-    print
+@pytest.mark.parametrize(
+    ("group"),
+    utils.get_groups(utils.get_configuration(__file__))
+)
+def test_check_services(local_salt_client, group):
+    output = local_salt_client.cmd(group, 'service.get_all')
 
+    if len(output.keys()) < 2:
+        pytest.skip("Nothing to compare - only 1 node")
 
-for group_name, nodes in groups.items():
-    print "-" * 140
-    if len(nodes) > 1:
+    nodes = []
+    pkts_data = []
+    my_set = set()
 
-        print "Start verification for group %s" % group_name
+    for node in output:
+        nodes.append(node)
+        my_set.update(output[node])
 
-        for node_i in nodes:
-            for node_j in nodes:
-                if node_i[0] == node_j[0]:
-                    continue
-
-                node_i_name, node_j_name = node_i[0], node_j[0]
-                node_i_services, node_j_services = node_i[1], node_j[1]
-
-                missed_services = []
-
-                for service_name in node_i_services:
-                    if service_name in services_to_skip:
-                        continue
-
-                    if service_name not in node_j_services:
-                        missed_services.append((service_name))
-
-                if missed_services:
-                    draw_table_missed_services(
-                        node_i_name, node_j_name, missed_services)
-                    print "-" * 140
-
-    else:
-        print "Verification for group {} was skipped "\
-              "due to count of nodes less than 2".format(group_name)
-    print "-" * 140
+    for srv in my_set:
+        row = []
+        row.append(srv)
+        for node in nodes:
+            if srv in output[node]:
+                row.append("+")
+            else:
+                row.append("No service")
+        if row.count(row[1]) < len(nodes):
+            pkts_data.append(row)
+    assert len(pkts_data) <= 1, \
+        "Several problems found for {0} group: {1}".format(
+        group, json.dumps(pkts_data, indent=4))
