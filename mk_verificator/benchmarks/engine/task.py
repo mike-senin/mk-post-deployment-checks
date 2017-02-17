@@ -29,6 +29,8 @@ class Task(object):
         # TODO (msenin) add update DB
         self.scenario_body = scenario
 
+        # self.scenario_args = None
+
     @property
     def state(self):
         return self._state
@@ -45,6 +47,7 @@ class Task(object):
     def start(self, results_array):
         results = {}
         for task_phase in ['setup', 'main', 'teardown']:
+            # TODO
             phase_results = {'results': '', 'state': '', 'exceptions': None}
             try:
                 # TODO (msenin) return result within functions

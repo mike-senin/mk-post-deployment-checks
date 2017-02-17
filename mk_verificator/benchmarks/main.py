@@ -4,9 +4,10 @@ import yaml
 
 from mk_verificator.benchmarks.engine.discover import discover
 from mk_verificator.benchmarks.engine.runner import Runner
+from mk_verificator.benchmarks.engine.scheme import PipelineScheme
 
 from mk_verificator.benchmarks.engine import scenario_convertor, \
-    filter_scenarios, scheme_parser
+    filter_scenarios, init_tasks
 
 
 
@@ -24,38 +25,33 @@ def parse_args():
 
 
 if __name__ == '__main__':
-    # 1. discover scenarios
-    discovered_scenarios = discover()
 
+    # 1. init scheme
     input_scenarios_scheme_file = 'scenario.yaml'
+    pipeline_scheme = PipelineScheme(input_scenarios_scheme_file)
 
-    scenarios_scheme = scheme_parser(input_scenarios_scheme_file)
+    # 2. discover scenarios
+    discovered_scenarios = discover()
+    import pdb; pdb.set_trace()
+    filtered_scenarios = filter_scenarios(discovered_scenarios,
+                                          pipeline_scheme)
 
-    scenarios = filter_scenarios(discovered_scenarios,
-                                 scenarios_scheme)
+    scenarios_repository = dict(
+        (scenario_class.__name__,
+         scenario_class) for scenario_class in filtered_scenarios
+    )
 
-    # 3. init scenarios
-    # TODO (msenin) ADD skipper for broken tests
-    # (when have no possibility to init instance of the class)
-    # Also we have to have possibility to pass additional arguments
-    # to the tests
+    # 3. init tasks
+    print scenarios_repository
 
-    init_scenarios = []
+    tasks = init_tasks(scenarios_repository,
+                       pipeline_scheme.scenarios_set)
 
-    for scenario_class, scenario_data in zip(scenarios, scenarios_scheme):
-        kwargs = scenario_data.get('params')
-        init_scenarios.append(scenario_class(**kwargs))
-
-    # 4. convert scenario to the task
-    tasks = scenario_convertor(init_scenarios)
-
-    # 5. put tasks set to the runner
+    # 4. put tasks set to the runner
     # TODO (msenin) move this logic to the engine __init__.py
     runner = Runner(tasks)
 
-    # 6. start tasks
-
-    runner = Runner(tasks)
+    # 5. start tasks
 
     start_time = time.time()
 

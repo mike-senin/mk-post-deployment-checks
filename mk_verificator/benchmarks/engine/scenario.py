@@ -19,3 +19,9 @@ class Scenario(object):
     @abstractmethod
     def teardown(self):
         pass
+
+
+class ScenarioFabric(object):
+
+    def __init__(self, scenarios):
+        pass
