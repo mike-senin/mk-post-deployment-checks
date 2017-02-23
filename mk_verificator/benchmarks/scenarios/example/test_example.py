@@ -2,16 +2,13 @@ import pytest
 
 
 @pytest.fixture(scope='module')
-def setup():
+def setup(request):
     print 'setup VM once'
 
-    def fin():
+    def teardown():
         print 'delete VM once'
 
-
-@pytest.fixture
-def global_results(request):
-    return request.session.global_results
+    request.addfinalizer(teardown)
 
 
 @pytest.mark.parametrize(

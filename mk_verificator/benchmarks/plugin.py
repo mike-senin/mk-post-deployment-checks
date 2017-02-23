@@ -23,10 +23,20 @@ class BenchmarkPlugin(object):
         if report.failed:
             if report.longrepr:
                 test_name = report.location[-1]
-                filepath = report.longrepr.reprcrash.path
-                message = report.longrepr.reprcrash.message
-                line_number = report.longrepr.reprcrash.lineno
-                lines = report.longrepr.reprtraceback.reprentries[0].lines
+
+                # NOTE (msenin) sometimes instead of object longrepr is unicode
+                if not getattr(report.longrepr, 'reprcrash'):
+                    filepath = report.longrepr.location[0]
+                    message = report.longrepr
+                    # TODO (msenin)
+                    line_number = None
+                    lines = []
+                else:
+                    filepath = report.longrepr.reprcrash.path
+                    message = report.longrepr.reprcrash.message
+                    line_number = report.longrepr.reprcrash.lineno
+                    lines = report.longrepr.reprtraceback.reprentries[0].lines
+
                 trace_data = {
                     'filepath': filepath,
                     'message': message,
@@ -34,13 +44,15 @@ class BenchmarkPlugin(object):
                     'lines': lines
                     # TODO (msenin) add 'when' data
                 }
+
                 self.global_results.update(
-                        test_name, trace_data, 'exceptions'
+                    test_name, trace_data, 'exceptions'
                 )
             else:
                 # TODO (msenin)
                 print "there is no logs"
 
+    # TODO (msenin): Try to move logic to the pytest_collection_modifyitems
     @hookspec(firstresult=True)
     def pytest_pyfunc_call(self, pyfuncitem):
         # init initial body for results
@@ -48,37 +60,41 @@ class BenchmarkPlugin(object):
         args_names = []
         if parametrize:
             args = parametrize.args[::2]
-            try:
-                for _args_names in args:
-                    _args_names = _args_names.split(',')
-                    args_names += _args_names
-            except:
-                # TODO (msenin)
-                pass
+            for _args_names in args:
+                _args_names = _args_names.split(',')
+                args_names += _args_names
 
         all_funcargs = pyfuncitem.funcargs.items()
         test_params = dict(
-                (arg_name, arg_value) for arg_name, arg_value in
-                all_funcargs
-                if arg_name in args_names
+            (arg_name, arg_value) for arg_name, arg_value in
+            all_funcargs
+            if arg_name in args_names
         )
-        original_name = pyfuncitem.originalname
-
-        if not original_name:
-            original_name = pyfuncitem.name
 
         test_name = pyfuncitem.name
+
+        self.global_results.update(
+            test_name, test_params, 'test_args'
+        )
+
+    def _init_test_results(self, session, item):
+        original_name = item.originalname
+
+        if not original_name:
+            original_name = item.name
+
+        test_name = item.name
 
         test_report_body = {
             test_name: {
                 'original_test_name': original_name,
-                'test_args': test_params,
+                'test_args': None,
                 'results': None,
                 'exceptions': None
             }
         }
 
-        pyfuncitem.session.global_results.init(test_report_body)
+        session.global_results.init(test_report_body)
 
     def pytest_collection_modifyitems(self, session, config, items):
         # TODO (msenin): add regexp
@@ -88,6 +104,7 @@ class BenchmarkPlugin(object):
             deselected_items = []
 
             for item in items:
+                # import pdb; pdb.set_trace()
                 item_name = item.originalname or item.name
                 if item_name == self.test_name:
                     selected_items.append(item)
@@ -96,3 +113,6 @@ class BenchmarkPlugin(object):
 
             config.hook.pytest_deselected(items=deselected_items)
             items[:] = selected_items
+
+            for item in selected_items:
+                self._init_test_results(session, item)

@@ -7,7 +7,7 @@ def draw_results_table(shared_memory):
     tab = tt.Texttable()
     header = ['test_name', 'test_parameters', 'results', 'exceptions']
 
-    tab.set_cols_align(['r', 'l', 'r', 'l'])
+    tab.set_cols_align(['r', 'l', 'l', 'l'])
     tab.set_cols_width([20, 20, 20, 60])
     tab.header(header)
 
@@ -50,7 +50,8 @@ def cli():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--scenario_file", help="")
-    parser.add_argument("--test", default="__all__", help="")
+    parser.add_argument("--test", help="")
+    # TODO (msenin)
     parser.add_argument("--multiprocess", action="store_true", help="")
 
     args = parser.parse_args()

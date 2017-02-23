@@ -3,6 +3,7 @@ import yaml
 from mk_verificator.benchmarks.engine import terminal
 from mk_verificator.benchmarks.engine import conveyor
 
+
 if __name__ == '__main__':
     args = terminal.cli()
 
