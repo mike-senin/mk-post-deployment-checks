@@ -8,7 +8,7 @@ from mk_verificator import utils
     utils.get_groups(utils.get_configuration(__file__))
 )
 def test_check_nodes_state(local_salt_client, group):
-    output = local_salt_client.cmd(group, 'state.apply', ['alex_test'],
+    output = local_salt_client.cmd(group, 'state.apply', ['test_state'],
                                    kwarg={'test': 'True'})
     errors = {}
     for node in output:
