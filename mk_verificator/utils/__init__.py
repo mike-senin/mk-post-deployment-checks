@@ -1,5 +1,6 @@
 import os
 import yaml
+import time
 
 import salt.client as client
 
@@ -71,3 +72,21 @@ def get_configuration(path_to_test):
             global_config.update(yaml.load(file))
 
     return global_config
+
+
+def wait_for_vm_status_is_active(client, vm_id, retry_delay=5, timeout=60):
+    timeout_reached = False
+    start_time = time.time()
+    while not timeout_reached:
+        vm_status = client.servers.find(id=vm_id).status
+
+        if vm_status == 'ACTIVE':
+            break
+        elif vm_status == 'ERROR':
+            raise AssertionError("VM is in the status 'error'")
+
+        time.sleep(retry_delay)
+        timeout_reached = (time.time() - start_time) > timeout
+    else:
+        raise AssertionError("VM didn\'t get status active, "
+                             "VM has '{}' status".format(vm_status))
