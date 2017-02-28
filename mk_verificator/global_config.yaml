@@ -11,5 +11,7 @@ network_ref: <public_net_id>
 availability_zone: nova
 key_name: key
 key_path: "/home/.ssh/key.pem"
+size_image_mb: 100
+
 
 log_dir: /var/log/mk_verificator
