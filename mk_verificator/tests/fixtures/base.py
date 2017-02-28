@@ -1,6 +1,7 @@
 import pytest
 import salt.client as client
 import novaclient.client as nv_client
+import glanceclient.client as gl_client
 import mk_verificator.utils as utils
 
 
@@ -25,6 +26,22 @@ def nova_client():
         config['url'],
         service_type="compute",
         endpoint_type=config['endpoint_type'])
+    return client
+
+
+@pytest.fixture
+def glance_client():
+    config = utils.get_configuration(__file__)
+
+    # TODO(den) openstack catalog list
+    version = '2'
+
+    client = gl_client.Client(
+        version,
+        config['admin_username'],
+        config['admin_password'],
+        config['admin_project_id'],
+        config['url'])
     return client
 
 
