@@ -5,7 +5,7 @@ import mk_verificator.utils as utils
 
 
 @pytest.fixture
-def create_image(nova_client):
+def create_image():
     config = utils.get_configuration(__file__)
     name_image = '/tmp/test_image.dd.img'
 
