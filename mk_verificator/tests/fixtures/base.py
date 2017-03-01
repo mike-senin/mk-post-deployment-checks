@@ -3,6 +3,7 @@ import salt.client as client
 import novaclient.client as nv_client
 import glanceclient.client as gl_client
 import mk_verificator.utils as utils
+from keystoneauth1 import loading, session
 
 
 @pytest.fixture
@@ -33,15 +34,18 @@ def nova_client():
 def glance_client():
     config = utils.get_configuration(__file__)
 
+    loader = loading.get_plugin_loader('password')
+    auth = loader.load_from_options(
+        auth_url=config['url'],
+        username=config['admin_username'],
+        password=config['admin_password'],
+        project_id=config['admin_project_id'])
+    session = session.Session(auth=auth)
+
     # TODO(den) openstack catalog list
     version = '2'
 
-    client = gl_client.Client(
-        version,
-        config['admin_username'],
-        config['admin_password'],
-        config['admin_project_id'],
-        config['url'])
+    client = gl_client.Client(version, session=session)
     return client
 
 
