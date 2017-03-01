@@ -13,11 +13,9 @@ def create_vm(nova_client):
 
     nics = [{"net-id": net_id, "v4-fixed-ip": ''}]
     vm = nova_client.servers.create(
-        'test_migrtion', image_id, flavor_id, nics=nics)
+        'test_migration', image_id, flavor_id, nics=nics)
 
-    yield vm
-    # teardown
-    vm.delete()
+    return vm
 
 
 def checking_vm_host(client, vm_id, target_host):
@@ -44,3 +42,4 @@ def test_migration_for_all_nodes(nova_client, create_vm):
     for host in list_hosts:
         create_vm.live_migrate(host=host)
         checking_vm_host(nova_client, create_vm.id, host)
+    create_vm.delete()
