@@ -24,7 +24,6 @@ def test_check_package_versions(local_salt_client, group):
     for deb in my_set:
         diff = []
         row = []
-        row.append(deb)
         for node in nodes:
             if deb in output[node].keys():
                 diff.append(output[node][deb])
@@ -33,6 +32,7 @@ def test_check_package_versions(local_salt_client, group):
                 row.append("{}: No package".format(node))
         if diff.count(diff[0]) < len(nodes):
             row.sort()
+            row.insert(0, deb)
             pkts_data.append(row)
     assert len(pkts_data) <= 1, \
         "Several problems found for {0} group: {1}".format(
