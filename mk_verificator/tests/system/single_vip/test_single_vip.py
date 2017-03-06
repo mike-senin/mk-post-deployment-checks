@@ -18,7 +18,7 @@ def test_single_vip(local_salt_client, group):
 
     cnt = Counter(ipv4_list)
 
-    for ip in cnt.elements():
+    for ip in cnt:
         if ip == '127.0.0.1':
             continue
         elif cnt[ip] > 1:
