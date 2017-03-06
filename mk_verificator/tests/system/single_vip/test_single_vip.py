@@ -1,5 +1,6 @@
 import pytest
 from mk_verificator import utils
+from collections import Counter
 
 
 @pytest.mark.parametrize(
@@ -15,10 +16,11 @@ def test_single_vip(local_salt_client, group):
     for node in nodes_list:
         ipv4_list.extend(nodes_list.get(node).get('ipv4'))
 
-    ipv4_list.sort()
-    ipv4_list = list(filter(lambda ip: ip != '127.0.0.1', ipv4_list))
+    cnt = Counter(ipv4_list)
 
-    result = set([x for x in ipv4_list if ipv4_list.count(x) > 1])
-
-    assert not result, "VIP IP duplicate found " \
-                       "in group {}\n{}".format(group, result)
+    for ip in cnt.elements():
+        if ip == '127.0.0.1':
+            continue
+        elif cnt[ip] > 1:
+            assert "VIP IP duplicate found " \
+                   "in group {}\n{}".format(group, ipv4_list)
