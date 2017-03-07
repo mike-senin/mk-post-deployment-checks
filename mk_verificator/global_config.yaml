@@ -2,6 +2,7 @@
 admin_username: admin
 admin_password: 1111
 admin_project_id: 1111
+admin_project_name: admin
 url: ""
 url_v3: ""
 endpoint_type: internalURL
@@ -9,7 +10,9 @@ image_ref: b994881e-773a-4227-94cb-1082015a0930
 flavor_ref: 1
 network_ref: d338f648-9152-493d-ad3e-82d38ccbfa98
 availability_zone: nova
-size_image_mb: 100
+size_image_mb: 1000
+nova_version: '2.1'
+glance_version: '2'
 
 
 log_dir: /var/log/mk_verificator
