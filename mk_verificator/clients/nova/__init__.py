@@ -3,7 +3,7 @@ import mk_verificator.utils as utils
 import time
 
 
-class nova():
+class Nova():
 
     def __init__(self):
         config = utils.get_configuration(__file__)
