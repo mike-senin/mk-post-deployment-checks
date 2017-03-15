@@ -21,7 +21,7 @@ class Nova():
             endpoint_type=config['endpoint_type'])
         self.client = client
 
-    def create_vm(self, name):
+    def create_vm(self, name, key_name=None):
         config = utils.get_configuration(__file__)
 
         image_id = config['image_ref']
@@ -30,7 +30,7 @@ class Nova():
         nics = [{"net-id": net_id, "v4-fixed-ip": ''}]
 
         vm = self.client.servers.create(
-            name, image_id, flavor_id, nics=nics)
+            name, image_id, flavor_id, nics=nics, key_name=key_name)
 
         return vm
 
