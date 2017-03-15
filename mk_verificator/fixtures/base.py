@@ -46,8 +46,8 @@ def vm_kp():
 @pytest.yield_fixture(scope="function")
 def floating_ip():
     mk_nova = nova.Nova()
-    floating_ip = mk_nova.client.floating_ips.create(
-        mk_nova.client.floating_ip_pools.list()[0].name)
+    floating_pool = mk_nova.client.floating_ip_pools.list()[0].name
+    floating_ip = mk_nova.client.floating_ips.create(floating_pool)
     yield floating_ip
     mk_nova.client.floating_ips.delete(floating_ip.id)
 

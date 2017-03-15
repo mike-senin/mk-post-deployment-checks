@@ -2,7 +2,6 @@ import pytest
 import time
 import mk_verificator.utils as utils
 import mk_verificator.utils.ssh_client as ssh
-import mk_verificator.fixtures.base
 # TODO
 # Create fixture for adding/removing keypair
 # Create fixture for checking security groups
