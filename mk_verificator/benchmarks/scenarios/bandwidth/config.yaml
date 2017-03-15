@@ -1,0 +1,22 @@
+---
+skipped_nodes: []
+skipped_group: []
+groups: ['rmq']
+# test data
+host_groups:
+  asc: {control-plane: eth1, private: eth0}
+  ceph: {control-plane: cp, private: eno1, storage: storage}
+  cpu: {control-plane: bond0.1204, data: vhost0, private: eno1, storage: bond0.1208}
+  ctl: {control-plane: eth1, private: eth0, public: eth3, storage: eth2}
+  des: {control-plane: eth1, private: eth0}
+  kvm: {control-plane: br-cp, private: br-pxe}
+  log: {control-plane: eth1, private: eth0}
+  mon: {control-plane: eth1, data: eth2, private: eth0}
+  mtr: {control-plane: eth1, private: eth0}
+  nal: {control-plane: eth1, private: eth0}
+  ntw: {control-plane: eth1, data: eth2, private: eth0}
+  prx: {control-plane: eth1, private: eth0, public: eth2}
+  rmq: {control-plane: eth1, private: eth0}
+  saml: {control-plane: eth1, private: eth0, public: eth2}
+  sql: {control-plane: eth1, private: eth0}
+
