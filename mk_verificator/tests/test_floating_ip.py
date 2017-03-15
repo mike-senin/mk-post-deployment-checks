@@ -1,5 +1,4 @@
 import mk_verificator.utils.ssh_client as ssh
-import pytest
 
 
 def test_floating_ip(vm, floating_ip):

@@ -2,6 +2,8 @@ import pytest
 import random
 import salt.client as client
 import mk_verificator.clients.nova as nova
+import mk_verificator.utils as utils
+# TODO merge vm and vm_kp in one fixture
 
 
 @pytest.fixture
@@ -31,10 +33,21 @@ def vm():
 
 
 @pytest.yield_fixture(scope="function")
+def vm_kp():
+    config = utils.get_configuration(__file__)
+    mk_nova = nova.Nova()
+    vm = mk_nova.create_vm('qa-framework-{}'.format(random.randint(1, 100)),
+                           key_name=config['key_name'])
+    mk_nova.wait_for_vm_status_is_active(vm.id)
+    yield vm
+    vm.delete()
+
+
+@pytest.yield_fixture(scope="function")
 def floating_ip():
     mk_nova = nova.Nova()
-    floating_ip = mk_nova.client.floating_ips.create(
-                      mk_nova.client.floating_ip_pools.list()[0].name)
+    floating_pool = mk_nova.client.floating_ip_pools.list()[0].name
+    floating_ip = mk_nova.client.floating_ips.create(floating_pool)
     yield floating_ip
     mk_nova.client.floating_ips.delete(floating_ip.id)
 
