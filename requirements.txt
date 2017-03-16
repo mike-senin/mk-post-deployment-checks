@@ -3,4 +3,4 @@ flake8
 python-novaclient==7.0.0
 PyYAML
 texttable
-paramiko
+paramiko==2.1.2
