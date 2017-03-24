@@ -4,13 +4,15 @@ from mk_verificator import utils
 
 
 @pytest.mark.parametrize(
-    ("group"),
+    "group",
     utils.get_groups(utils.get_configuration(__file__))
 )
 def test_check_package_versions(local_salt_client, group):
+    config = utils.get_configuration(__file__)
+
     output = local_salt_client.cmd(group, 'lowpkg.list_pkgs')
 
-    if len(output.keys()) < 2:
+    if len(output.keys()) < config["min_nodes"]:
         pytest.skip("Nothing to compare - only 1 node")
 
     nodes = []
@@ -34,21 +36,23 @@ def test_check_package_versions(local_salt_client, group):
             row.sort()
             row.insert(0, deb)
             pkts_data.append(row)
-    assert len(pkts_data) <= 1, \
+    assert len(pkts_data) <= config["pkgs_data_len"], \
         "Several problems found for {0} group: {1}".format(
         group, json.dumps(pkts_data, indent=4))
 
 
 @pytest.mark.parametrize(
-    ("group"),
+    "group",
     utils.get_groups(utils.get_configuration(__file__))
 )
 def test_check_module_versions(local_salt_client, group):
+    config = utils.get_configuration(__file__)
+
     pre_check = local_salt_client.cmd(group, 'cmd.run',
                                       ['dpkg -l | grep "python-pip "'])
-    if pre_check.values().count('') > 0:
+    if pre_check.values().count('') > config["zero"]:
         pytest.skip("pip is not installed on one or more nodes")
-    if len(pre_check.keys()) < 2:
+    if len(pre_check.keys()) < config["min_nodes"]:
         pytest.skip("Nothing to compare - only 1 node")
     output = local_salt_client.cmd(group, 'pip.freeze')
 
@@ -71,6 +75,6 @@ def test_check_module_versions(local_salt_client, group):
                 row.append("No module")
         if row.count(row[1]) < len(nodes):
             pkts_data.append(row)
-    assert len(pkts_data) <= 1, \
+    assert len(pkts_data) <= config["pkgs_data_len"], \
         "Several problems found for {0} group: {1}".format(
         group, json.dumps(pkts_data, indent=4))

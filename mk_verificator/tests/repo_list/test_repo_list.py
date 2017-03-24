@@ -4,7 +4,7 @@ from mk_verificator import utils
 
 
 @pytest.mark.parametrize(
-    ("node"),
+    "node",
     utils.get_groups(utils.get_configuration(__file__))
 )
 def test_list_of_repo_on_nodes(local_salt_client, node):

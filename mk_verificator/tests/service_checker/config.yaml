@@ -1,3 +1,5 @@
 ---
 skipped_nodes: ['saml-global-01.mosci.jiocloud.com']
 skipped_group: []
+min_nodes: 2
+pkts_data_gauge: 1
