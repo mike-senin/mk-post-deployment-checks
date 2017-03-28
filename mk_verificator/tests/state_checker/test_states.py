@@ -31,6 +31,6 @@ def test_check_nodes_state(local_salt_client, group):
             errors[node] = result
         else:
             errors[node] = "Same errors"
-    assert len(errors.keys()) <= config["errors_gauge"], \
+    assert len(errors.keys()) <= config["skip_number"], \
         "Several problems found for {0} group: {1}".format(
         group, json.dumps(errors, indent=4))

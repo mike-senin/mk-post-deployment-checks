@@ -12,7 +12,7 @@ def test_check_services(local_salt_client, group):
 
     output = local_salt_client.cmd(group, 'service.get_all')
 
-    if len(output.keys()) < config["min_nodes"]:
+    if len(output.keys()) < 2:
         pytest.skip("Nothing to compare - only 1 node")
 
     nodes = []
@@ -33,6 +33,6 @@ def test_check_services(local_salt_client, group):
                 row.append("No service")
         if row.count(row[1]) < len(nodes):
             pkts_data.append(row)
-    assert len(pkts_data) <= config["pkts_data_gauge"], \
+    assert len(pkts_data) <= config["skip_number"], \
         "Several problems found for {0} group: {1}".format(
         group, json.dumps(pkts_data, indent=4))

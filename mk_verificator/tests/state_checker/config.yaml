@@ -1,4 +1,4 @@
 ---
 skipped_nodes: ['saml-global-01.mosci.jiocloud.com']
 skipped_group: []
-errors_gauge: 1
+skip_number: 1

@@ -17,8 +17,8 @@ def test_ntp_sync(group, local_salt_client):
     nodes_time = local_salt_client.cmd(group, 'cmd.run', ['date +%s'])
 
     for node, time in nodes_time.iteritems():
-        if (int(time) - saltmaster_time) > config["sec_gauge_positive"] or \
-                (int(time) - saltmaster_time) < config["sec_gauge_negative"]:
+        if (int(time) - saltmaster_time) > config["time_deviation"] or \
+                (int(time) - saltmaster_time) < -config["time_deviation"]:
             fail[node] = time
 
     assert not fail, 'SaltMaster time: {}\n' \

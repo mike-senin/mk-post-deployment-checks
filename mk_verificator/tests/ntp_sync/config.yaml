@@ -1,5 +1,5 @@
 ---
 skipped_nodes: ['saml-global-01.mosci.jiocloud.com']
 skipped_group: []
-sec_gauge_positive: 30
-sec_gauge_negative: -30
+time_deviation: 30
+
