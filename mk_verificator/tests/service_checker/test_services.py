@@ -4,10 +4,12 @@ from mk_verificator import utils
 
 
 @pytest.mark.parametrize(
-    ("group"),
+    "group",
     utils.get_groups(utils.get_configuration(__file__))
 )
 def test_check_services(local_salt_client, group):
+    config = utils.get_configuration(__file__)
+
     output = local_salt_client.cmd(group, 'service.get_all')
 
     if len(output.keys()) < 2:
@@ -31,6 +33,6 @@ def test_check_services(local_salt_client, group):
                 row.append("No service")
         if row.count(row[1]) < len(nodes):
             pkts_data.append(row)
-    assert len(pkts_data) <= 1, \
+    assert len(pkts_data) <= config["skip_number"], \
         "Several problems found for {0} group: {1}".format(
         group, json.dumps(pkts_data, indent=4))
