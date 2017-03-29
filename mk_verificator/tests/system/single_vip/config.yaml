@@ -1,6 +1,0 @@
----
-skipped_nodes: ['saml-global-01.mosci.jiocloud.com']
-skipped_group: []
-errors_gauge: 1
-host_ip: '127.0.0.1'
-protocol: 'ipv4'
