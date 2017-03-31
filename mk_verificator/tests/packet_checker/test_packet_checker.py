@@ -12,7 +12,7 @@ def test_check_package_versions(local_salt_client, group):
 
     output = local_salt_client.cmd(group, 'lowpkg.list_pkgs')
 
-    if len(output.keys()) < config["min_nodes"]:
+    if len(output.keys()) < 2:
         pytest.skip("Nothing to compare - only 1 node")
 
     nodes = []
