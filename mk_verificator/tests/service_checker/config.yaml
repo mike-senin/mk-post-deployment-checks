@@ -1,4 +1,5 @@
 ---
-skipped_nodes: ['saml-global-01.mosci.jiocloud.com']
+skipped_nodes: []
 skipped_group: []
-skip_number: 1
+#how many errors to skip (ignore)
+skip_number: 0
