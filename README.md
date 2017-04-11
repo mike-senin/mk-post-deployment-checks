@@ -29,5 +29,6 @@ if needed.
 
 4) Start tests (make sure you are root):
 ```bash 
-   # py.test -sv --ignore .venv/
+   # pytest -sv mk_verificator/tests/ --ignore mk_verificator/tests/test_migration.py --ignore mk_verificator/tests/test_floating_ip.py 
 ```
+Note that all tests and benchmarks that use nova client and ssh are not working from cfg node (only from bmk).
