@@ -3,6 +3,9 @@ import random
 import salt.client as client
 import mk_verificator.clients.nova as nova
 import mk_verificator.utils as utils
+import glanceclient.client as gl_client
+from keystoneauth1.identity import v3
+from keystoneauth1 import session
 # TODO merge vm and vm_kp in one fixture
 
 
@@ -60,3 +63,19 @@ def groups(active_nodes, skipped_group=None):
         if node not in skipped_group
     ]
     return groups
+
+@pytest.fixture
+def glance_client():
+    config = utils.get_configuration(__file__)
+
+    auth = v3.Password(
+        auth_url=config['url_v3'],
+        username=config['admin_username'],
+        password=config['admin_password'],
+        project_id=config['admin_project_id'],
+        user_domain_id='default',
+        project_domain_id='default')
+    sess = session.Session(auth=auth, verify=False)
+
+    client = gl_client.Client(config['glance_version'], session=sess)
+    return client

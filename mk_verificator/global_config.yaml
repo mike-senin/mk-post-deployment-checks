@@ -12,4 +12,8 @@ availability_zone: nova
 key_name: key
 key_path: "/home/.ssh/key.pem"
 
+size_image_mb: 1000
+nova_version: '2.1'
+glance_version: '2'
+
 log_dir: /var/log/mk_verificator
