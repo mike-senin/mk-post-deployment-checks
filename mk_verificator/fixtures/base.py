@@ -64,6 +64,7 @@ def groups(active_nodes, skipped_group=None):
     ]
     return groups
 
+
 @pytest.fixture
 def glance_client():
     config = utils.get_configuration(__file__)

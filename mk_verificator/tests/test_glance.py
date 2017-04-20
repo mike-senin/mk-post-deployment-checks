@@ -1,5 +1,4 @@
 import pytest
-import os
 import time
 import subprocess
 import mk_verificator.utils as utils
@@ -8,13 +7,13 @@ path_upload_image = '/tmp/test_image_upload.dd.img'
 path_download_image = '/tmp/test_image_download.dd.img'
 name_image = "test_image_mk_framework"
 
+
 @pytest.fixture
 def create_image():
     config = utils.get_configuration(__file__)
 
-
-    line = 'dd if=/dev/zero of={} bs=1M count=' \
-       '{}'.format(name_image, config['size_image_mb'])
+    line = 'dd if=/dev/zero of={} bs=1M count='\
+           '{}'.format(name_image, config['size_image_mb'])
 
     subprocess.call(line.split())
     yield path_upload_image
