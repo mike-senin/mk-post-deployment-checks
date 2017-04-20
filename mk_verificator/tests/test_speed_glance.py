@@ -1,9 +1,12 @@
 import pytest
 import os
+import subprocess
 import time
 import mk_verificator.utils as utils
 
-name_image = '/tmp/test_image.dd.img'
+path_upload_image = '/tmp/test_image_upload.dd.img'
+path_download_image = '/tmp/test_image_download.dd.img'
+name_image = "test_image_mk_framework"
 
 
 @pytest.fixture
@@ -13,11 +16,12 @@ def create_image():
     line = 'dd if=/dev/zero of={} bs=1M count=' \
            '{}'.format(name_image, config['size_image_mb'])
 
-    os.system(line)
-    yield name_image
+    subprocess.call(line.split())
+    yield path_upload_image
 
     # teardown
-    os.system('rm {}'.format(name_image))
+    subprocess.call('rm {}'.format(path_upload_image).split())
+    subprocess.call('rm {}'.format(path_download_image).split())
 
 
 def test_speed_glance(create_image, glance_client):
