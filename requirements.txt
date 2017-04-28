@@ -1,8 +1,5 @@
 pytest==3.0.6
 flake8
-python-novaclient==7.0.0
 python-glanceclient==2.6.0
 PyYAML
 texttable
-# temporarily disabled
-#paramiko==2.1.2
