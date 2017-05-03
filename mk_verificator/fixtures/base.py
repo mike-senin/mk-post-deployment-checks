@@ -78,5 +78,9 @@ def glance_client():
         project_domain_id='default')
     sess = session.Session(auth=auth, verify=False)
 
-    client = gl_client.Client(config['glance_version'], session=sess)
+    endpoint = auth.get_endpoint(
+        session=sess,service_type='image',interface='internal')
+    client = gl_client.Client(
+        config['glance_version'], endpoint, session=sess)
     return client
+
