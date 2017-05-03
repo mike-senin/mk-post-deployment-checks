@@ -79,8 +79,8 @@ def glance_client():
     sess = session.Session(auth=auth, verify=False)
 
     endpoint = auth.get_endpoint(
-        session=sess,service_type='image',interface='internal')
+        session=sess, service_type='image', interface='internal')
     client = gl_client.Client(
         config['glance_version'], endpoint, session=sess)
-    return client
 
+    return client
