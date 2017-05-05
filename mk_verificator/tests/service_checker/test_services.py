@@ -10,7 +10,7 @@ from mk_verificator import utils
 def test_check_services(local_salt_client, group):
     config = utils.get_configuration(__file__)
 
-    output = local_salt_client.cmd(group, 'service.get_all')
+    output = local_salt_client.cmd(group, 'service.get_all', expr_form='pcre')
 
     if len(output.keys()) < 2:
         pytest.skip("Nothing to compare - only 1 node")

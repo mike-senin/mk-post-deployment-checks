@@ -15,8 +15,8 @@ def test_mtu(local_salt_client, group):
     total = {}
     failed_ifaces = {}
 
-    network_info = local_salt_client.cmd(group, 'cmd.run',
-                                         ['sudo ls /sys/class/net/'])
+    network_info = local_salt_client.cmd(
+        group, 'cmd.run', ['sudo ls /sys/class/net/'], expr_form='pcre')
 
     for node, ifaces_info in network_info.iteritems():
         if 'kvm' in node:

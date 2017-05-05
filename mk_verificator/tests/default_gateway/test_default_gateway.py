@@ -10,8 +10,8 @@ from mk_verificator import utils
 )
 def test_check_default_gateways(local_salt_client, group):
     config = utils.get_configuration(__file__)
-    netstat_info = \
-        local_salt_client.cmd(group, 'cmd.run', ['ip r | sed -n 1p'])
+    netstat_info = local_salt_client.cmd(
+        group, 'cmd.run', ['ip r | sed -n 1p'], expr_form='pcre')
 
     gateways = {}
     nodes = netstat_info.keys()

@@ -51,7 +51,35 @@ def get_groups(config):
             raise ValueError('Config file contains'
                              ' invalid groups name: {}'.format(invalid_groups))
 
-    return test_groups if test_groups else groups
+    groups = test_groups if test_groups else groups
+
+    # For splitting Ceph nodes
+    local_salt_client = init_salt_client()
+
+    if "ceph*" in groups:
+        groups.remove("ceph*")
+
+        #ToDo(den) Remake it !!!
+        ceph = [x.split('.')[0] for x in active_nodes if
+                ('ceph' in x.split('.')[0])]
+
+        ceph_status = local_salt_client.cmd(
+            'ceph-001*', "cmd.run", ["ceph -s"])
+
+        mon = []
+        mon.append(ceph_status.values()[0].split('=')[0].split('{')[-1])
+        mon.append(ceph_status.values()[0].split('=')[1].split(',')[-1])
+        mon.append(ceph_status.values()[0].split('=')[2].split(',')[-1])
+
+        mon_regex = "({0}.*)".format(".*|".join(mon))
+
+        ceph = list(set(ceph) - set(mon))
+        ceph_regex = "({0}.*)".format(".*|".join(ceph))
+
+        groups.append(mon_regex)
+        groups.append(ceph_regex)
+
+    return groups
 
 
 def get_configuration(path_to_test):

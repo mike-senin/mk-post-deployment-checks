@@ -8,8 +8,9 @@ from collections import Counter
     utils.get_groups(utils.get_configuration(__file__))
 )
 def test_single_vip(local_salt_client, group):
-    local_salt_client.cmd(group, 'saltutil.sync_all')
-    nodes_list = local_salt_client.cmd(group, 'grains.item', ['ipv4'])
+    local_salt_client.cmd(group, 'saltutil.sync_all', expr_form='pcre')
+    nodes_list = local_salt_client.cmd(
+        group, 'grains.item', ['ipv4'], expr_form='pcre')
 
     ipv4_list = []
 
