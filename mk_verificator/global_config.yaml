@@ -2,15 +2,7 @@
 admin_username: admin
 admin_password: <password>
 admin_project_id: <project_id>
-url: ""
 url_v3: ""
-endpoint_type: internalURL
-image_ref: <cirros_image_id>
-flavor_ref: 1
-network_ref: <public_net_id>
-availability_zone: nova
-key_name: key
-key_path: "/home/.ssh/key.pem"
 
 size_image_mb: 4000
 glance_version: '2'

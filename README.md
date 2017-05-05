@@ -29,6 +29,11 @@ if needed.
 
 4) Start tests (make sure you are root):
 ```bash 
-   # pytest -sv mk_verificator/tests/ --ignore mk_verificator/tests/test_migration.py --ignore mk_verificator/tests/test_floating_ip.py 
+   # pytest -sv mk_verificator/tests/
 ```
-Note that all tests and benchmarks that use nova client and ssh are not working from cfg node (only from bmk).
+
+5) Also you can use some scripts from mk_verificator/scripts:
+* iperf.py - run iperf for any cluster node
+* list_services_by_group.py - list services in cluster
+* package_checker.py - check diff in packages on nodes
+* services_checker.py - check diff in services on nodes
