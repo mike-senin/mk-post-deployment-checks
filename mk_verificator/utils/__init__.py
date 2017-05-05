@@ -59,7 +59,7 @@ def get_groups(config):
     if "ceph*" in groups:
         groups.remove("ceph*")
 
-        #ToDo(den) Remake it !!!
+        # ToDo(den) Remake it !!!
         ceph = [x.split('.')[0] for x in active_nodes if
                 ('ceph' in x.split('.')[0])]
 
