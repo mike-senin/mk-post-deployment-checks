@@ -10,7 +10,7 @@ def test_galera_cluster_status(local_salt_client):
     for item in gs.values():
         size_cluster.append(item.split('\n')[-1].strip())
 
-    assert size_cluster == ['{}'.format(amount)] * amount, \
+    assert all(item == str(amount) for item in size_cluster), \
         '''There found inconsistency within cloud. MySQL galera cluster
               is probably broken, the cluster size gathered from nodes:
               {}'''.format(gs)
