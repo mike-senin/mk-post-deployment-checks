@@ -29,7 +29,7 @@ if needed.
 
 4) Start tests (make sure you are root):
 ```bash 
-   # pytest -sv mk_verificator/tests/
+   # pytest --tb=short -sv mk_verificator/tests/
 ```
 
 5) Also you can use some scripts from mk_verificator/scripts:

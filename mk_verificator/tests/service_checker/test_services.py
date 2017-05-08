@@ -27,8 +27,8 @@ def test_check_services(local_salt_client, group):
         diff = []
         row = []
         for node in nodes:
-            if srv in output[node].keys():
-                diff.append(output[node][srv])
+            if srv in output[node]:
+                diff.append(srv)
                 row.append("{}: +".format(node))
             else:
                 row.append("{}: No service".format(node))
