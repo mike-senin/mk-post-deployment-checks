@@ -1,4 +1,3 @@
-import json
 import re
 import pytest
 from mk_verificator import utils
@@ -11,18 +10,15 @@ from mk_verificator import utils
 def test_checking_rabbitmq_cluster(local_salt_client, group):
     # request pillar data from rmq nodes
     rabbitmq_pillar_data = local_salt_client.cmd(
-        group,
-        'cmd.run',
-        ['salt-call pillar.data --output json rabbitmq:cluster'])
+        group, 'pillar.data', ['rabbitmq:cluster'])
 
     # creating dictionary {node:cluster_size_for_the_node}
     # with required cluster size for each node
     control_dict = {}
     required_cluster_size_dict = {}
     for node in rabbitmq_pillar_data:
-        data = json.loads(rabbitmq_pillar_data[node])
-        cluster_size_from_the_node = \
-            len(data['local']['rabbitmq:cluster']['members'])
+        cluster_size_from_the_node = len(
+            rabbitmq_pillar_data[node]['rabbitmq:cluster']['members'])
         required_cluster_size_dict.update({node: cluster_size_from_the_node})
 
     # request actual data from rmq nodes
