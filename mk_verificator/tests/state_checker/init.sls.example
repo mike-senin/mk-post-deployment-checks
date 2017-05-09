@@ -1,0 +1,9 @@
+{% if 'ctl' in grains['host'] %}
+apache2:
+  pkg.installed:
+    - version: 2.0
+  service.running:
+    - require:
+      - pkg: apache2
+    - enable: True
+{% endif %}
