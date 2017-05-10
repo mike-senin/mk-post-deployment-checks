@@ -27,13 +27,20 @@ if needed.
    # python setup.py develop
 ```
 
-4) Start tests (make sure you are root):
+4) Prepare test state (you need to create it in your env folder):
+```bash
+   # mkdir /srv/salt/env/prd/test_state/
+   # cat mk_verificator/tests/state_checker/init.sls.example > /srv/salt/env/prd/test_state/init.sls
+```
+Please change this state according to your environment (add services/packages).
+
+5) Start tests (make sure you are root):
 ```bash 
    # pytest --tb=short -sv mk_verificator/tests/
 ```
 
-5) Also you can use some scripts from mk_verificator/scripts:
-* iperf.py - run iperf for any cluster node
-* list_services_by_group.py - list services in cluster
+6) Also you can use some scripts from mk_verificator/scripts:
+* iperf.py - run iperf for any pair of cluster nodes
+* list_services_by_group.py - list services on all nodes
 * package_checker.py - check diff in packages on nodes
 * services_checker.py - check diff in services on nodes
