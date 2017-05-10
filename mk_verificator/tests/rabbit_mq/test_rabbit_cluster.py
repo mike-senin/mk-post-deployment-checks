@@ -10,10 +10,7 @@ from mk_verificator import utils
 def test_checking_rabbitmq_cluster(local_salt_client, group):
     # request pillar data from rmq nodes
     rabbitmq_pillar_data = local_salt_client.cmd(
-        group,
-        'cmd.run',
-        ['salt-call pillar.data --output json rabbitmq:cluster'],
-        expr_form='pcre')
+        group, 'pillar.data', ['rabbitmq:cluster'], expr_form='pcre')
 
     # creating dictionary {node:cluster_size_for_the_node}
     # with required cluster size for each node
