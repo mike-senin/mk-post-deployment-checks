@@ -64,12 +64,10 @@ def get_groups(config):
                 ('ceph' in x.split('.')[0])]
 
         ceph_status = local_salt_client.cmd(
-            'ceph-001*', "cmd.run", ["ceph -s"])
+            'ceph*', "cmd.run", ["ps aux | grep ceph-mon | grep -v grep"])
 
-        mon = []
-        mon.append(ceph_status.values()[0].split('=')[0].split('{')[-1])
-        mon.append(ceph_status.values()[0].split('=')[1].split(',')[-1])
-        mon.append(ceph_status.values()[0].split('=')[2].split(',')[-1])
+        mon = [node.split('.')[0] for node in ceph_status if
+                        ceph_status[node] != '']
 
         mon_regex = "({0}.*)".format(".*|".join(mon))
 
