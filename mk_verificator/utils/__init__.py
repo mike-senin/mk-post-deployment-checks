@@ -67,7 +67,7 @@ def get_groups(config):
             'ceph*', "cmd.run", ["ps aux | grep ceph-mon | grep -v grep"])
 
         mon = [node.split('.')[0] for node in ceph_status if
-                        ceph_status[node] != '']
+               ceph_status[node] != '']
 
         mon_regex = "({0}.*)".format(".*|".join(mon))
 
