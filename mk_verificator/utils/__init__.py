@@ -62,18 +62,18 @@ def get_groups(config):
         ceph_status = local_salt_client.cmd(
             'ceph*', "cmd.run", ["ps aux | grep ceph-mon | grep -v grep"])
 
-        mon = [node.split('.')[0] for node in ceph_status
-               if (ceph_status[node] != '')]
+        mon = []
+        ceph = []
+        for node in ceph_status:
+            if ceph_status[node] != '':
+                mon.append(node.split('.')[0])
+            else:
+                ceph.append(node.split('.')[0])
 
         mon_regex = "({0}.*)".format(".*|".join(mon))
-
-        ceph = [node.split('.')[0] for node in active_nodes
-                if ('ceph' in node.split('.')[0])]
-
-        ceph = list(set(ceph) - set(mon))
-        ceph_regex = "({0}.*)".format(".*|".join(ceph))
-
         groups.append(mon_regex)
+
+        ceph_regex = "({0}.*)".format(".*|".join(ceph))
         groups.append(ceph_regex)
 
     return groups
