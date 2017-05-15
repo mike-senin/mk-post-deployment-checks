@@ -4,20 +4,18 @@ from mk_verificator import utils
 
 
 @pytest.mark.parametrize(
-    "node",
+    "group",
     utils.get_groups(utils.get_configuration(__file__))
 )
-def test_list_of_repo_on_nodes(local_salt_client, node):
+def test_list_of_repo_on_nodes(local_salt_client, group):
     info_salt = local_salt_client.cmd(
-        node,
-        'pillar.data',
-        ['linux:system:repo']
-    )
+        group, 'pillar.data', ['linux:system:repo'], expr_form='pcre')
 
     raw_actual_info = local_salt_client.cmd(
-        node,
+        group,
         'cmd.run',
-        ['cat /etc/apt/sources.list.d/*;cat /etc/apt/sources.list|grep deb'])
+        ['cat /etc/apt/sources.list.d/*;cat /etc/apt/sources.list|grep deb'],
+        expr_form='pcre')
 
     actual_repo_list = [item.replace('/ ', ' ')
                         for item in raw_actual_info.values()[0].split('\n')]

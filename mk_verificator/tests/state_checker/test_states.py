@@ -10,8 +10,9 @@ from mk_verificator import utils
 def test_check_nodes_state(local_salt_client, group):
     config = utils.get_configuration(__file__)
 
-    output = local_salt_client.cmd(group, 'state.apply', ['test_state'],
-                                   kwarg={'test': 'True'})
+    output = local_salt_client.cmd(
+        group, 'state.apply', ['test_state'],
+        kwarg={'test': 'True'}, expr_form='pcre')
     errors = {}
     for node in output:
         result = []

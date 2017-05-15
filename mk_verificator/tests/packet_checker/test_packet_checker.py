@@ -10,7 +10,7 @@ from mk_verificator import utils
 def test_check_package_versions(local_salt_client, group):
     config = utils.get_configuration(__file__)
 
-    output = local_salt_client.cmd(group, 'lowpkg.list_pkgs')
+    output = local_salt_client.cmd(group, 'lowpkg.list_pkgs', expr_form='pcre')
 
     if len(output.keys()) < 2:
         pytest.skip("Nothing to compare - only 1 node")
@@ -48,13 +48,13 @@ def test_check_package_versions(local_salt_client, group):
 def test_check_module_versions(local_salt_client, group):
     config = utils.get_configuration(__file__)
 
-    pre_check = local_salt_client.cmd(group, 'cmd.run',
-                                      ['dpkg -l | grep "python-pip "'])
+    pre_check = local_salt_client.cmd(
+        group, 'cmd.run', ['dpkg -l | grep "python-pip "'], expr_form='pcre')
     if pre_check.values().count('') > 0:
         pytest.skip("pip is not installed on one or more nodes")
     if len(pre_check.keys()) < 2:
         pytest.skip("Nothing to compare - only 1 node")
-    output = local_salt_client.cmd(group, 'pip.freeze')
+    output = local_salt_client.cmd(group, 'pip.freeze', expr_form='pcre')
 
     nodes = []
     pkts_data = []
