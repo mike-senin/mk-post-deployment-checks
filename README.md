@@ -9,13 +9,17 @@ How to start
 1) Copy repo to **cfg-*** node or clone it:
 ```bash 
    # root@cfg-01:~/# git clone https://github.com/msenin94/mk-post-deployment-checks 
+   # cd mk-post-deployment-checks/
 ```
 Use git config --global http.proxy http://proxyuser:proxypwd@proxy.server.com:8080
 if needed.
 
-2) Go to the repo folder:
+2) Install virtualenv 
 ```bash
-   # cd mk-post-deployment-checks/
+   # curl -O https://pypi.python.org/packages/source/v/virtualenv/virtualenv-X.X.tar.gz
+   # tar xvfz virtualenv-X.X.tar.gz
+   # cd virtualenv-X.X
+   # sudo python setup.py install
 ```
 
 3) Create virtualenv and install requirements and package:
