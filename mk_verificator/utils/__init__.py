@@ -1,6 +1,6 @@
 import os
 import yaml
-
+import re
 import salt.client as client
 
 
@@ -23,17 +23,17 @@ def get_active_nodes(config):
 
 
 def get_groups(config):
+    # assume that node name is like <name>.domain
+    # last 1-3 digits of name are index, e.g. 001 in cpu001
+    # name doesn't contain dots
     active_nodes = get_active_nodes(config)
     skipped_group = config.get('skipped_group') or []
     groups = []
-
     for node in active_nodes:
-        group_name = "{group_name}*".format(
-            group_name=node.split('-')[0]
-        )
+        index = re.search('[0-9]{1,3}$', node.split('.')[0])
+        group_name = node.split('.')[0][:-len(index.group(0))]
         if group_name not in skipped_group and group_name not in groups:
             groups.append(group_name)
-
     test_groups = []
     groups_from_config = config.get('groups')
     # check if config.yaml contains `groups` key
