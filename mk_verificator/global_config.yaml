@@ -8,3 +8,6 @@ size_image_mb: 4000
 glance_version: '2'
 
 log_dir: /var/log/mk_verificator
+
+ceph_monitors: ['mon01*', 'mon02*', 'mon03*']
+ceph_osd_probe_node: ['mon01*']
