@@ -1,16 +1,15 @@
 import re
-import pytest
-from mk_verificator import utils
+# from mk_verificator import utils
 
 
-@pytest.mark.parametrize(
-    "group",
-    utils.get_groups(utils.get_configuration(__file__))
-)
-def test_checking_rabbitmq_cluster(local_salt_client, group):
+def test_checking_rabbitmq_cluster(local_salt_client):
+    # disable config for this test
+    # it may be reintroduced in future
+    # config = utils.get_configuration(__file__)
     # request pillar data from rmq nodes
     rabbitmq_pillar_data = local_salt_client.cmd(
-        group, 'pillar.data', ['rabbitmq:cluster'], expr_form='pcre')
+        'rabbitmq:server', 'pillar.data',
+        ['rabbitmq:cluster'], expr_form='pillar')
 
     # creating dictionary {node:cluster_size_for_the_node}
     # with required cluster size for each node
@@ -23,7 +22,8 @@ def test_checking_rabbitmq_cluster(local_salt_client, group):
 
     # request actual data from rmq nodes
     rabbit_actual_data = local_salt_client.cmd(
-        group, 'cmd.run', ['rabbitmqctl cluster_status'], expr_form='pcre')
+        'rabbitmq:server', 'cmd.run',
+        ['rabbitmqctl cluster_status'], expr_form='pillar')
 
     # find actual cluster size for each node
     for node in rabbit_actual_data:
