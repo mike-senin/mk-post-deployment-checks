@@ -1,6 +1,8 @@
 def test_contrail_compute_status(local_salt_client):
     cs = local_salt_client.cmd(
-        'cpu*', 'cmd.run', ['contrail-status | grep -Pv \'(==|^$)\'']
+        'nova:compute', 'cmd.run',
+        ['contrail-status | grep -Pv \'(==|^$)\''],
+        expr_form='pillar'
     )
     broken_services = []
 
@@ -18,11 +20,16 @@ def test_contrail_compute_status(local_salt_client):
 
 def test_contrail_node_status(local_salt_client):
     cs = local_salt_client.cmd(
-        'n[tw|al]*', 'cmd.run',
-        ['contrail-status | grep -Pv \'(==|^$|Disk|unix|support)\'']
+        'opencontrail:client:analytics_node', 'cmd.run',
+        ['contrail-status | grep -Pv \'(==|^$|Disk|unix|support)\''],
+        expr_form='pillar'
+    )
+    cs.update(local_salt_client.cmd(
+        'opencontrail:control', 'cmd.run',
+        ['contrail-status | grep -Pv \'(==|^$|Disk|unix|support)\''],
+        expr_form='pillar')
     )
     broken_services = []
-
     for node in cs:
         for line in cs[node].split('\n'):
             line = line.strip()
@@ -37,7 +44,8 @@ def test_contrail_node_status(local_salt_client):
 
 def test_contrail_vrouter_count(local_salt_client):
     cs = local_salt_client.cmd(
-        'cpu*', 'cmd.run', ['contrail-status | grep -Pv \'(==|^$)\'']
+        'nova:compute', 'cmd.run', ['contrail-status | grep -Pv \'(==|^$)\''],
+        expr_form='pillar'
     )
 
     actual_vrouter_count = 0
