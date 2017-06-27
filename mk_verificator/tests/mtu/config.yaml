@@ -3,7 +3,7 @@ skipped_nodes: []
 skipped_group: []
 skipped_ifaces: ["bonding_masters", "lo"]
 expected_mtu:
-# example
-#-  node-01:
-#-    eth0: '1500'
-#-    eth1: '9000'
+# #example
+#  node-01:
+#    eth0: '1500'
+#    eth1: '9000'

@@ -18,8 +18,11 @@ def test_mtu(local_salt_client, group):
     network_info = local_salt_client.cmd(
         group, 'cmd.run', ['sudo ls /sys/class/net/'], expr_form='pcre')
 
+    kvm_nodes = local_salt_client.cmd(
+        'salt:control', 'test.ping', expr_form='pillar').keys()
+
     for node, ifaces_info in network_info.iteritems():
-        if 'kvm' in node:
+        if node in kvm_nodes:
             kvm_info = local_salt_client.cmd(node, 'cmd.run',
                                              ["virsh list | grep jse2 | "
                                               "awk '{print $2}' | "
