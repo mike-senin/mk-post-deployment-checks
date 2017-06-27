@@ -139,6 +139,8 @@ def start_network_measurements():
                 if IPAddress(ip) in IPNetwork(nets[net]):
                     # print "FIRST IP is {}".format(ip)
                     for interf2 in nodes[pair[1]]:
+                        if 'inet' not in nodes[pair[1]][interf2].keys():
+                            continue
                         ip2 = nodes[pair[1]][interf2]['inet'][0]['address']
                         if IPAddress(ip2) in IPNetwork(nets[net]):
                             print "Will IPERF between {0} and {1}".format(ip,
@@ -147,8 +149,8 @@ def start_network_measurements():
                                 _start_iperf_between_hosts(pair[0], pair[1],
                                                            ip, ip2, net)
                                 print "Measurement between {} and {} " \
-                                      "have been finished".format(pair[0],
-                                                                  pair[1])
+                                      "has been finished".format(pair[0],
+                                                                 pair[1])
                             except Exception as e:
                                 print "Failed for {0} {1}".format(
                                       pair[0], pair[1])
